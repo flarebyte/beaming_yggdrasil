@@ -41,6 +41,8 @@ Each message includes:
 -   `size`: Optional content size (used if `value` is a reference).
 -   `media type`: Optional content type (e.g., image/jpeg).
 -   `flags`: Optional list of string flags for metadata.
+-   `sequence`: Monotonic integer that increases with each event within its
+    logical group.
 
 **Tree Structure**
 The remote store represents a tree where each node has a parent. `key id`
@@ -64,6 +66,13 @@ encodes the full path.
 
 -   There must be mechanisms to send messages from the user's perspective.
 
+**Event Sequence Model**
+Each change is treated as an append-only event within its group (e.g., topic,
+project), assigned a monotonic sequence number (`sequence`). This sequence is
+included in every WebSocket push. Clients use it to detect missing events and
+re-establish state by querying “events after last seen sequence.” This helps
+ensure message continuity and recovery after a connection loss.
+
 **Extensibility and Callbacks**
 
 -   Framework must allow registration of external callbacks to handle cache
@@ -76,32 +85,3 @@ encodes the full path.
 
 -   The system should expose diagnostics hooks.
 -   It should allow integration with logging and monitoring tools.
-
-**Use Cases**
-
--   User edits a note title → message sent to server, local cache updated.
--   Server pushes a topic rename → local tree updated.
--   User uploads a photo → value is a media reference, tracked via file
-    cache.
--   Device API injects a location tag as a message.
--   Offline device syncs multiple changes upon reconnection.
-
-**Edge Cases**
-
--   Message lost mid-sync; retry with version tracking.
--   Conflicting versions between server and local state.
--   Large media file partially synced, needs resumable strategy.
--   Server tree path deleted but cache still retains data.
--   Device API sends malformed or unauthorized message.
-
-**Limitations / Non-goals**
-
--   No direct server ↔ device API communication unless explicitly routed
-    via user.
--   No assumption of fixed message format or schema enforcement.
--   No embedded file storage logic — file handling is external via
-    callbacks.
--   No hard dependency on backend protocols or real-time systems.
--   No direct tree merging or conflict resolution logic (must be handled
-    externally).
--   No UI or visualization logic.
