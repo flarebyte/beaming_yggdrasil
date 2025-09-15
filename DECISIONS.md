@@ -85,3 +85,27 @@ ensure message continuity and recovery after a connection loss.
 
 -   The system should expose diagnostics hooks.
 -   It should allow integration with logging and monitoring tools.
+
+## Possible use of RxDart
+
+-   Use RxDart Subject or StreamController to represent incoming message
+    streams (e.g. WebSocket pushes). Each message can carry the full
+    metadata (including the sequence number).
+
+-   Have local replay logic: keep the last seen sequence number in local
+    sync state; when connection resumes, make a call to the server: “give
+    me all events after seq X”. RxDart stream will receive the incoming
+    events.
+
+-   Buffer events while offline, then replay or when online fetch missing,
+    feed into the stream.
+
+-   Use RxDart operators for filtering, mapping, deduplication (if you get
+    duplicate events), throttling if too many in batch, etc.
+
+-   Subscribe separately to object vs file events: e.g. if message
+    references media, route it to a file cache subscriber; otherwise to
+    JSON/object cache subscriber.
+
+-   Use RxDart error handling, retry operators / logic to retry failed
+    sends or missing fetches.
