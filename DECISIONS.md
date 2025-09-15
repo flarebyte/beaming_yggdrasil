@@ -31,7 +31,7 @@ Each message includes:
 -   `id`: Unique message identifier (UUID).
 -   `kind`: Logical type (e.g., note).
 -   `source`: Originator (e.g., user).
--   `destination`: Target (e.g., server).
+-   `destination`: Target (e.g., server, group/123, user/123).
 -   `key id`: Tree path identifier (e.g., project/uuid/topic/uuid/title).
 -   `local key id`: Optional local reference (e.g., numeric or
     device-specific).
