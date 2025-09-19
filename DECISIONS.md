@@ -116,3 +116,20 @@ ensure message continuity and recovery after a connection loss.
 
 -   Use RxDart error handling, retry operators / logic to retry failed
     sends or missing fetches.
+
+Here is the additional paragraph that fits with the rest of the spec:
+
+## WebSocket Integration
+
+The framework should support a WebSocket communication layer compatible with
+AWS API Gateway WebSocket protocol. It must use a bespoke application-level
+message format to carry synchronization messages. The WebSocket connection
+must implement a heartbeat mechanism using periodic ping/pong messages to
+keep the connection alive and detect stale or dropped connections. It should
+include a replay mechanism where clients can request missing messages based
+on the last acknowledged sequence number. A smart retry mechanism must handle
+transient failures, with exponential backoff, jitter, and re-authentication
+if required. The system must detect internet connectivity loss promptly and
+suspend retries until a connection is restored, at which point it should
+resume synchronization by querying for any missed messages using the
+sequence-based replay protocol.
