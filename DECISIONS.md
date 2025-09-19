@@ -37,12 +37,19 @@ Each message includes:
     device-specific).
 -   `value`: Typically a string or a reference to binary/media data.
 -   `version`: UUID used for chronological versioning.
--   `integrity hash`: Optional hash to validate content.
+-   `integrity hash`: Optional hash to validate content (checksum)
 -   `size`: Optional content size (used if `value` is a reference).
--   `media type`: Optional content type (e.g., image/jpeg).
+-   `content type`: Optional content type (e.g., image/jpeg).
 -   `flags`: Optional list of string flags for metadata.
 -   `sequence`: Monotonic integer that increases with each event within its
     logical group.
+-   `created` — When the event was created (UTC) - perhaps just date no
+    time -`application version` — Useful for auditing.
+-   position / offset — The event’s global position across all streams
+    (read only)
+
+Note: perhaps additional fields like userId, tenantId, correlationId,
+causationId, ... may be required on the server side.
 
 **Tree Structure**
 The remote store represents a tree where each node has a parent. `key id`
