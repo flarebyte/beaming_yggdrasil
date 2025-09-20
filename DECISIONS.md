@@ -47,6 +47,7 @@ Each message includes:
     time -`application version` — Useful for auditing.
 -   position / offset — The event’s global position across all streams
     (read only)
+-   `language`: iso code of the language for the value
 
 Note: perhaps additional fields like userId, tenantId, correlationId,
 causationId, ... may be required on the server side.
