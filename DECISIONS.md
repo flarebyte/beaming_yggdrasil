@@ -52,6 +52,40 @@ Each message includes:
 Note: perhaps additional fields like userId, tenantId, correlationId,
 causationId, ... may be required on the server side.
 
+
+### 🧩 Field Ownership & Trust Review
+
+| Field                | Type            | Created By             | Should Be Required? | Trust Server Only? | Notes                                                                                     |
+| -------------------- | --------------- | ---------------------- | ------------------- | ------------------ | ----------------------------------------------------------------------------------------- |
+| `id`                 | `String`        | Client                 | ✅ Yes               | ❌ No               | UUIDv4 is fine from client; useful for deduplication. Server may reassign in edge cases.  |
+| `kind`               | `String`        | Client                 | ✅ Yes               | ❌ No               | Defines message purpose. No need to override.                                             |
+| `source`             | `String`        | Client                 | ✅ Yes               | ❌ No               | Origin label (e.g., user ID). Usually signed/authenticated separately.                    |
+| `destination`        | `String`        | Client                 | ✅ Yes               | ❌ No               | Target address or group. Validated by server, but client-provided.                        |
+| `keyId`              | `String`        | Client                 | ✅ Yes               | ❌ No               | Logical path/grouping. Client-driven, validated on server.                                |
+| `localKeyId`         | `String?`       | Client                 | ❌ No                | ❌ No               | Temporary or local use only. Not trusted or used by server.                               |
+| `value`              | `String`        | Client                 | ✅ Yes               | ❌ No               | Main content. Trust depends on authentication, not this field.                            |
+| `version`            | `String`        | Client                 | ✅ Yes               | ❌ No               | Client must version its events for ordering/deduplication.                                |
+| `integrityHash`      | `String?`       | Server (or recomputed) | ❌ No                | ✅ Yes              | If client provides it, it should be ignored/validated. Server should recompute if needed. |
+| `size`               | `int?`          | Server (or recomputed) | ❌ No                | ✅ Yes              | Must reflect actual byte size. Server recomputes if `value` is a reference.               |
+| `contentType`        | `String?`       | Client                 | ❌ No                | ❌ No               | Suggestive only. Server may override for binary validation.                               |
+| `flags`              | `List<String>?` | Client or Server       | ❌ No                | ❌ No               | Metadata for UX/UI or filtering. Server may enrich.                                       |
+| `sequence`           | `int`           | Server                 | ❌ No                | ✅ Yes              | Defines logical order in stream. Must be assigned by the server.                          |
+| `created`            | `DateTime`      | Client or Server       | ✅ Yes               | ❌ No               | Usually client-generated, but server may validate clock drift.                            |
+| `applicationVersion` | `String`        | Client                 | ✅ Yes               | ❌ No               | Important for audit/compatibility. Client-provided.                                       |
+| `position`           | `int`           | Server                 | ❌ No                | ✅ Yes              | Global offset. Always assigned by server during commit.                                   |
+| `language`           | `String?`       | Client or Server       | ❌ No                | ❌ No               | May be inferred by server, but optional at source.                                        |
+
+---
+
+### 🔐 Trust Model Interpretation
+
+| Field Category                                | Fields                                                                                                                                  |
+| --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| ✅ **Safe from client**                        | `id`, `kind`, `source`, `destination`, `keyId`, `value`, `version`, `created`, `applicationVersion`, `flags`, `language`, `contentType` |
+| ⚠️ **Client-submitted but must be validated** | `destination`, `contentType`, `created` (clock), `language`                                                                             |
+| 🔒 **Must be server-generated or verified**   | `sequence`, `position`, `integrityHash`, `size`                                                                                         |
+
+
 **Tree Structure**
 The remote store represents a tree where each node has a parent. `key id`
 encodes the full path.
