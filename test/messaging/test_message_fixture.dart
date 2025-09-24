@@ -9,7 +9,8 @@ class TestMessages {
         .setSource('user/druid-aedan')
         .setDestination('group/circle-of-oaks')
         .setKeyId('tribe/gael/forest/connacht/oracle')
-        .setValue('The mist shall rise before the blood moon, revealing the path to the lost grove.')
+        .setValue(
+            'The mist shall rise before the blood moon, revealing the path to the lost grove.')
         .setVersion('11111111-aaaa-bbbb-cccc-000000000002')
         .setCreated(DateTime.utc(2023, 10, 31))
         .setApplicationVersion('1.2.5')
@@ -25,7 +26,8 @@ class TestMessages {
         .setSource('user/skald-ingvar')
         .setDestination('group/longhouse/ulfheim')
         .setKeyId('realm/midgard/scrolls/ulfheim/legends')
-        .setValue('In the shadow of the fjord, the wyrm sleeps under snow and ash.')
+        .setValue(
+            'In the shadow of the fjord, the wyrm sleeps under snow and ash.')
         .setVersion('22222222-bbbb-cccc-dddd-000000000002')
         .setCreated(DateTime.utc(2025, 1, 1))
         .setApplicationVersion('2.1.0')
@@ -41,7 +43,8 @@ class TestMessages {
         .setSource('user/lyrien')
         .setDestination('group/forest/glade')
         .setKeyId('court/elves/songs/lament-of-the-stars')
-        .setValue('Stars whisper songs in the tongue of silver leaves and moonlit wind.')
+        .setValue(
+            'Stars whisper songs in the tongue of silver leaves and moonlit wind.')
         .setVersion('33333333-cccc-dddd-eeee-000000000002')
         .setCreated(DateTime.utc(2024, 7, 21))
         .setApplicationVersion('1.8.3')
@@ -80,4 +83,3 @@ class TestMessages {
         .build();
   }
 }
-
