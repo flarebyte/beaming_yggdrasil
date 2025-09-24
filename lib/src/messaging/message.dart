@@ -79,9 +79,9 @@ class Message {
 }
 
 /// Builder class for constructing immutable [Message] instances.
-/// 
+///
 /// All required fields must be set before calling [build].
-/// 
+///
 /// Usage:
 /// ```dart
 /// final message = MessageBuilder()
@@ -128,13 +128,15 @@ class MessageBuilder {
   MessageBuilder setSource(String source) => _with(() => _source = source);
 
   /// Sets the message target (e.g., 'group/123', 'server').
-  MessageBuilder setDestination(String destination) => _with(() => _destination = destination);
+  MessageBuilder setDestination(String destination) =>
+      _with(() => _destination = destination);
 
   /// Sets the hierarchical key identifier for message grouping.
   MessageBuilder setKeyId(String keyId) => _with(() => _keyId = keyId);
 
   /// Sets an optional local reference (e.g., numeric or device-specific ID).
-  MessageBuilder setLocalKeyId(String? localKeyId) => _with(() => _localKeyId = localKeyId);
+  MessageBuilder setLocalKeyId(String? localKeyId) =>
+      _with(() => _localKeyId = localKeyId);
 
   /// Sets the message content or reference to external data.
   MessageBuilder setValue(String value) => _with(() => _value = value);
@@ -143,13 +145,15 @@ class MessageBuilder {
   MessageBuilder setVersion(String version) => _with(() => _version = version);
 
   /// Sets an optional checksum for validating content integrity.
-  MessageBuilder setIntegrityHash(String? integrityHash) => _with(() => _integrityHash = integrityHash);
+  MessageBuilder setIntegrityHash(String? integrityHash) =>
+      _with(() => _integrityHash = integrityHash);
 
   /// Sets the optional content size (used if [value] is a reference).
   MessageBuilder setSize(int? size) => _with(() => _size = size);
 
   /// Sets the optional MIME content type (e.g., 'text/plain').
-  MessageBuilder setContentType(String? contentType) => _with(() => _contentType = contentType);
+  MessageBuilder setContentType(String? contentType) =>
+      _with(() => _contentType = contentType);
 
   /// Sets optional metadata flags (e.g., 'pinned', 'urgent').
   MessageBuilder setFlags(List<String>? flags) => _with(() => _flags = flags);
@@ -158,48 +162,58 @@ class MessageBuilder {
   MessageBuilder setSequence(int sequence) => _with(() => _sequence = sequence);
 
   /// Sets the UTC timestamp of creation.
-  MessageBuilder setCreated(DateTime created) => _with(() => _created = created);
+  MessageBuilder setCreated(DateTime created) =>
+      _with(() => _created = created);
 
   /// Sets the originating application version.
-  MessageBuilder setApplicationVersion(String applicationVersion) => _with(() => _applicationVersion = applicationVersion);
+  MessageBuilder setApplicationVersion(String applicationVersion) =>
+      _with(() => _applicationVersion = applicationVersion);
 
   /// Sets the global stream offset position.
   MessageBuilder setPosition(int position) => _with(() => _position = position);
 
   /// Sets the ISO language code for the content.
-  MessageBuilder setLanguage(String language) => _with(() => _language = language);
+  MessageBuilder setLanguage(String language) =>
+      _with(() => _language = language);
 
   /// Builds and returns an immutable [Message] instance.
-  /// 
+  ///
   /// Throws a [StateError] if any required fields are missing.
   Message build() {
     return Message._(
-      id: _id ?? _missing('id'),
-      kind: _kind ?? _missing('kind'),
-      source: _source ?? _missing('source'),
-      destination: _destination ?? _missing('destination'),
-      keyId: _keyId ?? _missing('keyId'),
+      id: _requireNonEmpty(_id, 'id'),
+      kind: _requireNonEmpty(_kind, 'kind'),
+      source: _requireNonEmpty(_source, 'source'),
+      destination: _requireNonEmpty(_destination, 'destination'),
+      keyId: _requireNonEmpty(_keyId, 'keyId'),
       localKeyId: _localKeyId,
-      value: _value ?? _missing('value'),
-      version: _version ?? _missing('version'),
+      value: _requireNonEmpty(_value, 'value'),
+      version: _requireNonEmpty(_version, 'version'),
       integrityHash: _integrityHash,
       size: _size,
       contentType: _contentType,
       flags: _flags,
       sequence: _sequence ?? _missing('sequence'),
       created: _created ?? _missing('created'),
-      applicationVersion: _applicationVersion ?? _missing('applicationVersion'),
+      applicationVersion:
+          _requireNonEmpty(_applicationVersion, 'applicationVersion'),
       position: _position ?? _missing('position'),
-      language: _language ?? _missing('language'),
+      language: _requireNonEmpty(_language, 'language'),
     );
   }
 
   MessageBuilder _with(void Function() updater) {
-  updater();
-  return this;
-}
+    updater();
+    return this;
+  }
+
+  String _requireNonEmpty(String? value, String fieldName) {
+    if (value == null || value.trim().isEmpty) {
+      throw StateError("Field '$fieldName' must not be empty.");
+    }
+    return value;
+  }
 
   Never _missing(String field) =>
-      throw StateError('Missing required field: $field');
+      throw StateError("Missing required field: $field");
 }
-
