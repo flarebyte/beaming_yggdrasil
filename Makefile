@@ -9,7 +9,13 @@ COVERAGE_LCOV := $(COVERAGE_DIR)/lcov.info
 COVERAGE_HTML_DIR := $(COVERAGE_DIR)/html
 PACKAGE_NAME := beaming_yggdrasil
 
-.PHONY: doc-gen doc-design-dir test-unit test-flutter test-coverage coverage-summary coverage-html format-dart
+.PHONY: doc-gen doc-design-dir analyze package-check test-unit test-flutter test-coverage coverage-summary coverage-html format-dart
+
+analyze:
+	@mkdir -p "$(DART_LOCAL_HOME)"
+	HOME="$(DART_LOCAL_HOME)" PUB_CACHE="$(PUB_CACHE_DIR)" DART_SUPPRESS_ANALYTICS=true dart analyze
+
+package-check: format-dart analyze test-unit
 
 doc-gen: doc-design-dir
 	$(FLYB) validate --config $(DOC_META_DIR)
@@ -51,4 +57,3 @@ complexity:
 
 dup:
 	npx jscpd --format dart --min-lines 10 --gitignore .
-

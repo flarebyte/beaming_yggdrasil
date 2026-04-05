@@ -78,6 +78,42 @@ void main() {
     expect(nodeValues.single.key.keyId, 'roots/oak/title');
     expect(nodeValues.single.value, 'oak');
   });
+
+  test('repeated identical node writes keep stable result and read ordering',
+      () async {
+    final harness = createBeamingInMemoryHarness();
+    addTearDown(harness.close);
+    final values = _oakNodeValues().reversed.toList();
+
+    final firstResults = await harness.client.setNode('roots/oak', values);
+    final firstRead = await harness.client.getNode(
+      'roots/oak',
+      ['roots/oak/status', 'roots/oak/title'],
+    );
+
+    final secondResults = await harness.client.setNode('roots/oak', values);
+    final secondRead = await harness.client.getNode(
+      'roots/oak',
+      ['roots/oak/status', 'roots/oak/title'],
+    );
+
+    expect(
+      firstResults.map((result) => result.key.keyId).toList(),
+      secondResults.map((result) => result.key.keyId).toList(),
+    );
+    expect(
+      firstResults.map((result) => result.status).toList(),
+      secondResults.map((result) => result.status).toList(),
+    );
+    expect(
+      firstRead.map((value) => value.key.keyId).toList(),
+      secondRead.map((value) => value.key.keyId).toList(),
+    );
+    expect(
+      firstRead.map((value) => value.value).toList(),
+      secondRead.map((value) => value.value).toList(),
+    );
+  });
 }
 
 List<BeamingValue> _oakNodeValues() {
