@@ -1,0 +1,7 @@
+primitive,why_it_helps_a_separate_cache_library
+immutable DTOs,cache layers can snapshot transform and replay state without shared mutable transport objects
+stable keyId and localKeyId fields,cache indexing provisional mapping and reconciliation remain straightforward
+version propagation,cache sync layers can implement optimistic write tracking and stale-write detection
+deterministic snapshot and node response shapes,cache adapters can normalize remote state into local key-value structures with less ambiguity
+event envelopes with explicit operation kinds,cache adapters can apply incremental updates without inferring intent from raw payload differences
+transport and stream hooks,cache-specific retry backoff and persistence logic can live in another package without forking this client

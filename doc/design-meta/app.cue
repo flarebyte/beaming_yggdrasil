@@ -37,6 +37,7 @@ reports: [{
 				"dart.client.scope",
 				"dart.client.planned-surface",
 				"dart.client.api-direction",
+				"dart.client.cache-integration-primitives",
 				"dart.client.stream-integration",
 				"dart.client.source-layout",
 				"dart.client.usecases",
@@ -140,6 +141,13 @@ notes: [
 		filepath: "examples/planned-surface.csv"
 		arguments: ["format-csv=table"]
 		labels: ["surface", "csv"]
+	},
+	{
+		name:  "dart.client.cache-integration-primitives"
+		title: "Cache Integration Primitives"
+		filepath: "examples/cache-integration.csv"
+		arguments: ["format-csv=table"]
+		labels: ["cache", "integration", "csv"]
 	},
 	{
 		name:  "dart.client.api-direction"

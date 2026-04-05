@@ -70,6 +70,17 @@ Major client areas, scope boundaries, and preferred API direction.
 | hiding wire status values behind overly opinionated abstractions | typed status enums or string constants |
 | committing the package to heavyweight keyId modeling too early | a transport error model that preserves server status and message content |
 
+#### Cache Integration Primitives
+
+| primitive | why_it_helps_a_separate_cache_library |
+| --- | --- |
+| immutable DTOs | cache layers can snapshot transform and replay state without shared mutable transport objects |
+| stable keyId and localKeyId fields | cache indexing provisional mapping and reconciliation remain straightforward |
+| version propagation | cache sync layers can implement optimistic write tracking and stale-write detection |
+| deterministic snapshot and node response shapes | cache adapters can normalize remote state into local key-value structures with less ambiguity |
+| event envelopes with explicit operation kinds | cache adapters can apply incremental updates without inferring intent from raw payload differences |
+| transport and stream hooks | cache-specific retry backoff and persistence logic can live in another package without forking this client |
+
 #### Planned Surface
 
 | intent | surface_area |
@@ -79,6 +90,7 @@ Major client areas, scope boundaries, and preferred API direction.
 | map provisional local keys to server-generated keys | create client methods |
 | keep mock-only controls available without polluting core application flows | optional admin commands for test harness usage |
 | allow incremental updates after initial bootstrap | optional WebSocket subscription and event handling |
+| make key-value synchronization easier without embedding cache ownership in this package | cache-friendly primitives for separate libraries |
 
 #### Client Scope
 
@@ -89,7 +101,7 @@ Major client areas, scope boundaries, and preferred API direction.
 | key-handling | carry keyId strings and optional kind hints | full key grammar and derivation rules |
 | error-model | map HTTP and websocket statuses into practical client errors | changing server status semantics |
 | test-support | support mock-server admin flows as optional APIs | production-only operations not present in chatty |
-| local-state | allow app code to build on DTOs if needed | shipping a full offline sync engine in this package |
+| local-state | expose primitives that make cache synchronization possible in another library | shipping a full offline sync engine or key-value cache in this package |
 
 #### Source Layout
 

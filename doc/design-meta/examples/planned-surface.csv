@@ -4,3 +4,4 @@ node read and write client methods,support targeted reads and writes without ful
 create client methods,map provisional local keys to server-generated keys
 optional admin commands for test harness usage,keep mock-only controls available without polluting core application flows
 optional WebSocket subscription and event handling,allow incremental updates after initial bootstrap
+cache-friendly primitives for separate libraries,make key-value synchronization easier without embedding cache ownership in this package
