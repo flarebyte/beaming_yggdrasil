@@ -1,0 +1,7 @@
+concern,recommended_behavior,customisation_hook,why_it_matters
+transport lifecycle,emit connect open closing closed and failure transitions,connection state listener or stream,applications need to observe readiness and degraded sessions without parsing logs
+REST request execution,expose request start finish failure and latency events,request hook with operation metadata,callers may want tracing metrics or custom audit pipelines
+WebSocket session activity,expose subscribe unsubscribe ping pong and reconnect-related events,session event hook,light websocket support still needs visibility when sessions flap or drift
+decode and protocol failures,surface malformed payload and contract mismatch details,error hook with typed context,integrators need to distinguish transport outages from protocol bugs
+retry and recovery decisions,emit when the higher layer retries refreshes or re-subscribes,policy hook invoked around recovery actions,the final recovery strategy is still evolving and should stay replaceable
+sensitive data handling,allow redaction before diagnostics leave the library,redaction hook or formatter hook,observability should not force unsafe payload logging

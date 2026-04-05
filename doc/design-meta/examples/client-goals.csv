@@ -1,0 +1,5 @@
+goal,rationale
+provide a Dart client for the chatty mock server,give Dart applications a practical transport client for the mock Yggdrasil service
+conform to the shipped REST and WebSocket payload formats,keep the client aligned with the server contracts it is expected to speak
+keep key handling intentionally lightweight,avoid overcommitting the package to server-owned key semantics
+avoid embedding strong keyId parsing or validation rules,leave deep key interpretation to a dedicated key library if one is needed later

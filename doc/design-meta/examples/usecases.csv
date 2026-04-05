@@ -1,0 +1,7 @@
+priority,usecase,why_it_matters,minimum_client_support
+1,snapshot bootstrap,lets a Dart app load baseline state quickly,send GET /snapshot payloads and decode envelopes
+2,targeted node read and write,lets a Dart app update and query specific values without full snapshot reload,send GET /node and PUT /node payloads and preserve item order
+3,optimistic conflict handling,lets a Dart app detect stale writes cleanly,surface outdated status and HTTP 409 without hiding server details
+4,create provisional records,lets a Dart app map local placeholders to server-generated keys,send POST /create and preserve localKeyId mappings
+5,websocket sync,lets a Dart app receive incremental updates after bootstrap,send subscribe/unsubscribe/ping and decode event messages
+6,admin reset for tests,lets integration tests seed or reset mock state quickly,support admin commands and test-only snapshot setup separately from the real client API

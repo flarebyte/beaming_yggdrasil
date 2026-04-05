@@ -1,0 +1,7 @@
+category,owned_by_client,not_owned_by_client
+transport-dtos,request and response DTOs,authoritative protocol evolution
+rest-surface,REST endpoint calls,server-side business logic
+websocket-surface,WebSocket command and event payloads,event-store or broker persistence
+envelopes,shallow envelope handling,deep domain state derivation
+correlation,preserve request ids and correlation ids,server-side request orchestration
+error-handling,practical client-side error mapping,changing canonical server status semantics

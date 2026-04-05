@@ -1,0 +1,8 @@
+transport,server_signal,client_expectation
+http,400 invalid,surface a typed invalid response or error with server message preserved
+http,409 outdated,surface conflict semantics without rewriting the message
+http,413 invalid,preserve oversize failure distinctly from malformed JSON
+http,200 ok with item-level invalid,keep top-level success separate from item-level failure details
+websocket,status invalid,treat as protocol-level invalid command not socket death
+websocket,connection close due to limits,surface transport error with close context when available
+websocket,event payloads,do not assume every message is a response to a prior command

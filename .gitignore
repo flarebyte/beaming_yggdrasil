@@ -37,3 +37,6 @@ doc/api/
 
 coverage/
 .idea/
+
+scratch/
+temp/

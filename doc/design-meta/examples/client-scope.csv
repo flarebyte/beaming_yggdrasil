@@ -1,0 +1,7 @@
+area,in_scope,out_of_scope
+rest-payloads,encode and decode shipped request response envelopes,server-side business logic
+websocket-payloads,encode and decode command and event messages,event-store persistence
+key-handling,carry keyId strings and optional kind hints,full key grammar and derivation rules
+error-model,map HTTP and websocket statuses into practical client errors,changing server status semantics
+test-support,support mock-server admin flows as optional APIs,production-only operations not present in chatty
+local-state,expose primitives that make cache synchronization possible in another library,shipping a full offline sync engine or key-value cache in this package

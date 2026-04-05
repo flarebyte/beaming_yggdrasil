@@ -1,0 +1,5 @@
+non_goal,reason
+parse the full logical key grammar,this package should not become the authority on key semantics
+derive authoritative kind values from keyId,the server remains the current source of truth for kind derivation
+duplicate server access-control logic,permissions should not be reimplemented in the Dart transport client
+mix local persistence concerns into the transport contract,offline storage belongs in a higher-level package or application layer

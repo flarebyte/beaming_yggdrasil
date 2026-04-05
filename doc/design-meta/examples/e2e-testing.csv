@@ -1,0 +1,7 @@
+test_area,expected_coverage,why_it_matters
+snapshot flows,Dart e2e tests should verify bootstrap and replace flows against a running chatty mock server,confirms the client speaks the real REST contract rather than only local DTO assumptions
+node flows,Dart e2e tests should verify targeted reads writes ordering and item-level statuses against chatty,protects the key-value style update model that application code will rely on
+create flows,Dart e2e tests should verify provisional localKeyId mapping and returned server keys against chatty,ensures client-side creation helpers stay compatible with server behavior
+websocket flows,Dart e2e tests should verify subscribe unsubscribe ping pong and event decoding against chatty,keeps the light websocket surface aligned with the mock server contract
+error flows,Dart e2e tests should verify invalid outdated and other transport-visible failures against chatty,prevents regressions where the client hides or rewrites useful server signals
+cross-repo compatibility,Dart e2e tests should run this client library against the mock server hosted at https://github.com/flarebyte/chatty-ratatoskr,anchors client behavior against the intended external reference implementation

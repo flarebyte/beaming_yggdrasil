@@ -1,0 +1,6 @@
+provide,avoid
+DTO classes for request and response payloads,a large code-generated schema framework before the core flows are pleasant to use
+a small HTTP client wrapper,overengineering transport composition before the main operations are stable
+a WebSocket session wrapper,forcing applications to assemble subscription lifecycle handling manually
+typed status enums or string constants,hiding wire status values behind overly opinionated abstractions
+a transport error model that preserves server status and message content,committing the package to heavyweight keyId modeling too early

@@ -1,0 +1,6 @@
+topic,recommendation,why_it_matters
+package-boundary,keep the core client as a pure Dart package with no Flutter framework dependency,lets the library be reused from Flutter apps server tools and test harnesses without UI coupling
+flutter-embedding,design the client so it can be instantiated and used inside a Flutter app lifecycle,real consumers will often call it from view models controllers or state-management layers
+ui-separation,keep widgets BuildContext and Flutter rendering concerns out of the core API,preserves testability and avoids forcing one Flutter architecture on consumers
+async-model,use Future and Stream based surfaces that compose naturally with Flutter and Dart async code,works cleanly with Flutter state management and with the optional Rx adapter layer
+platform-safety,avoid core assumptions that require dart:io only runtime behavior unless explicitly isolated behind adapters,keeps more Flutter target options open including tests and non-mobile runtimes

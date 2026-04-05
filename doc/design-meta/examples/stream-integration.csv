@@ -1,0 +1,6 @@
+aspect,preferred_direction,reason
+stream model,prefer Rx-style stream composition over imperative callback chains,reactive composition makes retry backoff and reconnection policies easier to layer without tangling transport code
+immutability,pass immutable DTOs and immutable event snapshots through the stream pipeline,immutable values reduce accidental shared-state bugs during retries buffering and fan-out
+retry support,model retries as higher-layer operators or policies around the stream rather than hidden transport behavior,keeps retry explicit testable and replaceable
+integration surface,offer both a classic Future and Stream surface and an optional Rx-friendly adapter,lets consumers choose idiomatic Dart or richer reactive composition without splitting the core object model
+transport boundary,keep raw transport separate from decoded reactive pipelines,preserves a narrow transport contract while still allowing rich stream orchestration above it
