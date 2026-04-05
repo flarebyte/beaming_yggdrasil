@@ -197,7 +197,6 @@ notes: [
 
 		    abstract class BeamingYggdrasilClient {
 		      Future<List<BeamingValue>> getSnapshot(String rootKeyId);
-		      Future<void> replaceSnapshot(String rootKeyId, List<BeamingValue> values);
 		      Future<List<BeamingValue>> getNode(String rootKeyId, List<String> keyIds);
 		      Future<List<BeamingWriteResult>> setNode(String rootKeyId, List<BeamingValue> values);
 		      Future<List<BeamingWriteResult>> createChildren(
@@ -207,9 +206,18 @@ notes: [
 		      Stream<BeamingEvent> watch(List<String> rootKeyIds);
 		    }
 
+		    abstract class BeamingYggdrasilTestingClient {
+		      Future<void> replaceSnapshot(
+		        String rootKeyId,
+		        List<BeamingValue> values,
+		      );
+		    }
+
 		Design guidance:
 
 		- keep this API as a convenience layer over the wire-level DTOs
+		- snapshots are created by the server and read by the real client
+		- snapshot replacement belongs in a separate testing or mock-control client
 		- preserve access to underlying statuses and versions
 		- make cache synchronization easy, but leave cache ownership to another package
 		- keep values immutable and string-only for now

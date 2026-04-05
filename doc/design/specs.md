@@ -85,7 +85,7 @@ Major client areas, scope boundaries, and preferred API direction.
 
 | intent | surface_area |
 | --- | --- |
-| bootstrap or replace state through snapshot endpoints | snapshot client methods |
+| bootstrap local state from server-created snapshots | snapshot read methods |
 | support targeted reads and writes without full snapshot reloads | node read and write client methods |
 | map provisional local keys to server-generated keys | create client methods |
 | keep mock-only controls available without polluting core application flows | optional admin commands for test harness usage |
@@ -140,7 +140,6 @@ A higher-level Dart surface can sit on top of the wire-level DTOs:
 
     abstract class BeamingYggdrasilClient {
       Future<List<BeamingValue>> getSnapshot(String rootKeyId);
-      Future<void> replaceSnapshot(String rootKeyId, List<BeamingValue> values);
       Future<List<BeamingValue>> getNode(String rootKeyId, List<String> keyIds);
       Future<List<BeamingWriteResult>> setNode(String rootKeyId, List<BeamingValue> values);
       Future<List<BeamingWriteResult>> createChildren(
@@ -150,9 +149,18 @@ A higher-level Dart surface can sit on top of the wire-level DTOs:
       Stream<BeamingEvent> watch(List<String> rootKeyIds);
     }
 
+    abstract class BeamingYggdrasilTestingClient {
+      Future<void> replaceSnapshot(
+        String rootKeyId,
+        List<BeamingValue> values,
+      );
+    }
+
 Design guidance:
 
 - keep this API as a convenience layer over the wire-level DTOs
+- snapshots are created by the server and read by the real client
+- snapshot replacement belongs in a separate testing or mock-control client
 - preserve access to underlying statuses and versions
 - make cache synchronization easy, but leave cache ownership to another package
 - keep values immutable and string-only for now
@@ -180,12 +188,12 @@ Design guidance:
 
 | minimum_client_support | priority | usecase | why_it_matters |
 | --- | --- | --- | --- |
-| send PUT /snapshot and GET /snapshot payloads and decode envelopes | 1 | snapshot bootstrap | lets a Dart app load baseline state quickly |
+| send GET /snapshot payloads and decode envelopes | 1 | snapshot bootstrap | lets a Dart app load baseline state quickly |
 | send GET /node and PUT /node payloads and preserve item order | 2 | targeted node read and write | lets a Dart app update and query specific values without full snapshot reload |
 | surface outdated status and HTTP 409 without hiding server details | 3 | optimistic conflict handling | lets a Dart app detect stale writes cleanly |
 | send POST /create and preserve localKeyId mappings | 4 | create provisional records | lets a Dart app map local placeholders to server-generated keys |
 | send subscribe/unsubscribe/ping and decode event messages | 5 | websocket sync | lets a Dart app receive incremental updates after bootstrap |
-| support admin commands separately from protocol APIs | 6 | admin reset for tests | lets integration tests reset mock state quickly |
+| support admin commands and test-only snapshot setup separately from the real client API | 6 | admin reset for tests | lets integration tests seed or reset mock state quickly |
 
 ## 02 REST Contract
 
@@ -199,7 +207,7 @@ Supported REST endpoint actions for the client.
 
 | action | method | notes | path | request_body | response_shape |
 | --- | --- | --- | --- | --- | --- |
-| setSnapshot | PUT | replaces authoritative snapshot for one root key | /snapshot | SetSnapshotRequest | Envelope<SetSnapshotResponseData> |
+| setSnapshot | PUT | mock-only or testing surface for seeding authoritative snapshot state rather than a normal end-user client operation | /snapshot | SetSnapshotRequest | Envelope<SetSnapshotResponseData> |
 | getSnapshot | GET | returns deterministic keyValueList ordering from server | /snapshot | GetSnapshotRequest | Envelope<GetSnapshotResponseData> |
 | setNode | PUT | preserves item order and item statuses | /node | SetKeyValueRequest | Envelope<SetKeyValueResponseData> |
 | getNode | GET | returns requested item order and item statuses | /node | GetKeyValueRequest | Envelope<GetKeyValueResponseData> |
@@ -249,10 +257,6 @@ export type NewKeysRequest = {
 };
 
 export interface BeamingYggdrasilRestClient {
-  setSnapshot(
-    request: SetSnapshotRequest,
-  ): Promise<Envelope<{ key: KeyParams }>>;
-
   getSnapshot(
     request: GetSnapshotRequest,
   ): Promise<Envelope<{ key: KeyParams; keyValueList: KeyValueParams[] }>>;
@@ -300,6 +304,12 @@ export interface BeamingYggdrasilRestClient {
       }>;
     }>
   >;
+}
+
+export interface BeamingYggdrasilTestingClient {
+  setSnapshot(
+    request: SetSnapshotRequest,
+  ): Promise<Envelope<{ key: KeyParams }>>;
 }
 
 // Dart translation guidance:

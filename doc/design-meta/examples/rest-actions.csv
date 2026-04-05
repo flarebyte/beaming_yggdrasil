@@ -1,5 +1,5 @@
 action,method,path,request_body,response_shape,notes
-setSnapshot,PUT,/snapshot,SetSnapshotRequest,Envelope<SetSnapshotResponseData>,replaces authoritative snapshot for one root key
+setSnapshot,PUT,/snapshot,SetSnapshotRequest,Envelope<SetSnapshotResponseData>,mock-only or testing surface for seeding authoritative snapshot state rather than a normal end-user client operation
 getSnapshot,GET,/snapshot,GetSnapshotRequest,Envelope<GetSnapshotResponseData>,returns deterministic keyValueList ordering from server
 setNode,PUT,/node,SetKeyValueRequest,Envelope<SetKeyValueResponseData>,preserves item order and item statuses
 getNode,GET,/node,GetKeyValueRequest,Envelope<GetKeyValueResponseData>,returns requested item order and item statuses

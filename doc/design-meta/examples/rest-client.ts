@@ -37,10 +37,6 @@ export type NewKeysRequest = {
 };
 
 export interface BeamingYggdrasilRestClient {
-  setSnapshot(
-    request: SetSnapshotRequest,
-  ): Promise<Envelope<{ key: KeyParams }>>;
-
   getSnapshot(
     request: GetSnapshotRequest,
   ): Promise<Envelope<{ key: KeyParams; keyValueList: KeyValueParams[] }>>;
@@ -88,6 +84,12 @@ export interface BeamingYggdrasilRestClient {
       }>;
     }>
   >;
+}
+
+export interface BeamingYggdrasilTestingClient {
+  setSnapshot(
+    request: SetSnapshotRequest,
+  ): Promise<Envelope<{ key: KeyParams }>>;
 }
 
 // Dart translation guidance:

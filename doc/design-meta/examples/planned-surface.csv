@@ -1,5 +1,5 @@
 surface_area,intent
-snapshot client methods,bootstrap or replace state through snapshot endpoints
+snapshot read methods,bootstrap local state from server-created snapshots
 node read and write client methods,support targeted reads and writes without full snapshot reloads
 create client methods,map provisional local keys to server-generated keys
 optional admin commands for test harness usage,keep mock-only controls available without polluting core application flows
