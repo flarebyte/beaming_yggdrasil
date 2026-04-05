@@ -45,3 +45,6 @@ doc-design-dir:
 		exit 1; \
 	fi
 	@mkdir -p "$(DOC_DESIGN_DIR)"
+
+complexity:
+	scc --sort complexity --by-file -i dart . | head -n 15
