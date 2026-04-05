@@ -1,0 +1,9 @@
+kind,direction,purpose,minimum_client_behavior
+subscribe,client->server,add allowed root subscriptions,send rootKeys and preserve correlation id if supplied
+unsubscribe,client->server,remove subscribed roots,handle successful no-op unsubscribe
+ping,client->server,explicit application-level heartbeat,decode pong and preserve correlation id
+subscribed,server->client,acknowledge active roots,update client session state if needed
+unsubscribed,server->client,acknowledge remaining roots,allow empty remaining root set
+pong,server->client,confirm application-level reachability,keep separate from transport-level websocket ping/pong
+status,server->client,report invalid command or invalid root,do not collapse this into transport failure
+event,server->client,deliver set or snapshot-replaced changes,decode event envelope and route by operation

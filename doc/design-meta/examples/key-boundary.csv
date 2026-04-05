@@ -1,0 +1,7 @@
+topic,client_rule,rationale
+keyId,treat as opaque string by default,server is the current authority on accepted key grammar
+kind,allow optional hint fields in DTOs but do not trust them as authoritative,server may ignore or derive kind values
+localKeyId,preserve client-side placeholders across create flows,this is needed for provisional object mapping
+version,preserve exact server version strings and send them back on optimistic writes,client should not invent version formats
+secureKeyId,carry mock or auth-related values through the payload without interpreting them deeply,server controls forcing and validation behavior
+key-validation,limit client validation to nullability and obvious request-shape checks,avoid duplicating parsing logic that may move into another package

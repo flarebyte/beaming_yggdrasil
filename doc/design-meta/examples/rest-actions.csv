@@ -1,0 +1,8 @@
+action,method,path,request_body,response_shape,notes
+setSnapshot,PUT,/snapshot,SetSnapshotRequest,Envelope<SetSnapshotResponseData>,replaces authoritative snapshot for one root key
+getSnapshot,GET,/snapshot,GetSnapshotRequest,Envelope<GetSnapshotResponseData>,returns deterministic keyValueList ordering from server
+setNode,PUT,/node,SetKeyValueRequest,Envelope<SetKeyValueResponseData>,preserves item order and item statuses
+getNode,GET,/node,GetKeyValueRequest,Envelope<GetKeyValueResponseData>,returns requested item order and item statuses
+create,POST,/create,NewKeysRequest,Envelope<NewKeysResponseData>,preserves localKeyId and child ordering
+setAdminCommands,PUT,/admin/commands,SetAdminCommandsRequest,Envelope<SetAdminCommandsResponseData>,optional mock-only surface for tests
+getAdminCommand,GET,/admin/commands,GetAdminCommandRequest,Envelope<GetAdminCommandResponseData>,optional mock-only surface for tests
