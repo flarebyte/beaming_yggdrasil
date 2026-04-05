@@ -3,6 +3,7 @@ import 'dart:async';
 import 'client.dart';
 import 'model.dart';
 import 'testing_client.dart';
+import 'websocket.dart';
 
 /// Small in-memory harness for early consumer workflow testing.
 ///
@@ -12,12 +13,14 @@ import 'testing_client.dart';
 class BeamingInMemoryHarness {
   final BeamingYggdrasilClient client;
   final BeamingYggdrasilTestingClient testingClient;
+  final BeamingYggdrasilWebSocketSession webSocketSession;
 
   final _InMemoryState _state;
 
   BeamingInMemoryHarness._(
     this.client,
     this.testingClient,
+    this.webSocketSession,
     this._state,
   );
 
@@ -26,6 +29,7 @@ class BeamingInMemoryHarness {
     return BeamingInMemoryHarness._(
       _InMemoryClient(state),
       _InMemoryTestingClient(state),
+      _InMemoryWebSocketSession(state),
       state,
     );
   }
@@ -46,16 +50,7 @@ class _InMemoryClient implements BeamingYggdrasilClient {
     String rootKeyId,
     List<BeamingClientKey> provisionalKeys,
   ) async {
-    return List<BeamingWriteResult>.unmodifiable(
-      provisionalKeys
-          .map(
-            (key) => BeamingWriteResult(
-              key: key,
-              status: 'ok',
-            ),
-          )
-          .toList(),
-    );
+    return _state.createChildren(rootKeyId, provisionalKeys);
   }
 
   @override
@@ -120,13 +115,84 @@ class _InMemoryTestingClient implements BeamingYggdrasilTestingClient {
   }
 }
 
+class _InMemoryWebSocketSession implements BeamingYggdrasilWebSocketSession {
+  final _InMemoryState _state;
+  final StreamController<BeamingServerMessage> _messages =
+      StreamController<BeamingServerMessage>.broadcast();
+  final Set<String> _subscribedRootKeys = <String>{};
+  late final StreamSubscription<BeamingEvent> _eventSubscription;
+
+  _InMemoryWebSocketSession(this._state) {
+    _eventSubscription = _state.events.listen((event) {
+      final rootKeyId = switch (event) {
+        BeamingSetEvent(:final rootKey) => rootKey.keyId,
+        BeamingSnapshotReplacedEvent(:final rootKey) => rootKey.keyId,
+      };
+      if (_subscribedRootKeys.contains(rootKeyId)) {
+        _messages.add(
+          BeamingEventMessage(
+            event: BeamingEventEnvelope.fromEvent(
+              event,
+              eventId: _state.nextEventId(),
+              created: _state.nextCreatedMarker(),
+            ),
+          ),
+        );
+      }
+    });
+  }
+
+  @override
+  Future<void> close() async {
+    await _eventSubscription.cancel();
+    await _messages.close();
+  }
+
+  @override
+  Stream<BeamingServerMessage> messages() => _messages.stream;
+
+  @override
+  Future<void> send(BeamingClientMessage message) async {
+    switch (message) {
+      case BeamingSubscribeMessage(:final rootKeys, :final id):
+        _subscribedRootKeys.addAll(rootKeys);
+        _messages.add(
+          BeamingSubscribedMessage(
+            id: id,
+            rootKeys: _subscribedRootKeys.toList()..sort(),
+          ),
+        );
+      case BeamingUnsubscribeMessage(:final rootKeys, :final id):
+        _subscribedRootKeys.removeAll(rootKeys);
+        _messages.add(
+          BeamingUnsubscribedMessage(
+            id: id,
+            rootKeys: _subscribedRootKeys.toList()..sort(),
+          ),
+        );
+      case BeamingPingMessage(:final id):
+        _messages.add(BeamingPongMessage(id: id));
+    }
+  }
+}
+
 class _InMemoryState {
   final StreamController<BeamingEvent> _events =
       StreamController<BeamingEvent>.broadcast();
   final Map<String, List<BeamingValue>> _snapshots = {};
   final Map<String, int> _snapshotCounters = {};
+  int _eventCounter = 0;
 
   Stream<BeamingEvent> get events => _events.stream;
+
+  Future<List<BeamingWriteResult>> createChildren(
+    String rootKeyId,
+    List<BeamingClientKey> provisionalKeys,
+  ) async {
+    return List<BeamingWriteResult>.unmodifiable(
+      provisionalKeys.map((key) => _createChild(rootKeyId, key)).toList(),
+    );
+  }
 
   void applyNodeValues(String rootKeyId, List<BeamingValue> values) {
     final current = List<BeamingValue>.from(_snapshots[rootKeyId] ?? const []);
@@ -153,6 +219,31 @@ class _InMemoryState {
     await _events.close();
   }
 
+  BeamingWriteResult _createChild(String rootKeyId, BeamingClientKey key) {
+    if (key.localKeyId == null || key.localKeyId!.trim().isEmpty) {
+      return BeamingWriteResult(
+        key: key,
+        status: 'invalid',
+        message: 'localKeyId is required for createChildren',
+      );
+    }
+    if (!_isChildKey(rootKeyId, key.keyId)) {
+      return BeamingWriteResult(
+        key: key,
+        status: 'invalid',
+        message: 'created keys must be children of the root key',
+      );
+    }
+    return BeamingWriteResult(
+      key: BeamingClientKey(
+        keyId: key.keyId,
+        version: key.version ?? 'created:${key.localKeyId}',
+        localKeyId: key.localKeyId,
+      ),
+      status: 'ok',
+    );
+  }
+
   void replaceSnapshot(String rootKeyId, List<BeamingValue> values) {
     final nextCounter = (_snapshotCounters[rootKeyId] ?? 0) + 1;
     _snapshotCounters[rootKeyId] = nextCounter;
@@ -171,5 +262,18 @@ class _InMemoryState {
 
   List<BeamingValue> snapshotValues(String rootKeyId) {
     return List<BeamingValue>.unmodifiable(_snapshots[rootKeyId] ?? const []);
+  }
+
+  bool _isChildKey(String rootKeyId, String keyId) {
+    return keyId.startsWith('$rootKeyId/');
+  }
+
+  String nextCreatedMarker() {
+    return 'created-$_eventCounter';
+  }
+
+  String nextEventId() {
+    _eventCounter += 1;
+    return 'event-$_eventCounter';
   }
 }
