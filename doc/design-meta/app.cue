@@ -4,6 +4,15 @@ source: "beaming-yggdrasil"
 name:   "beaming-yggdrasil"
 modules: ["core"]
 
+argumentRegistry: {
+	arguments: [{
+		name:          "format-csv"
+		valueType:     "string"
+		scopes:        ["note"]
+		allowedValues: ["table"]
+	}]
+}
+
 reports: [{
 	title:       "beaming_yggdrasil Design"
 	filepath:    "../design/specs.md"
