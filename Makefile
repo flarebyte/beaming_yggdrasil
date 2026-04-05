@@ -48,3 +48,7 @@ doc-design-dir:
 
 complexity:
 	scc --sort complexity --by-file -i dart . | head -n 15
+
+dup:
+	npx jscpd --format dart --min-lines 10 --gitignore .
+

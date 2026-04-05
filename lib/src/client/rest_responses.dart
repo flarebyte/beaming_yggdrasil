@@ -45,15 +45,31 @@ class BeamingGetSnapshotResponseData {
   }
 }
 
-class BeamingStatusKeyItem {
+abstract class _BeamingStatusKeyEntry {
   final BeamingKeyParams key;
   final String status;
   final String? message;
 
-  const BeamingStatusKeyItem({
+  const _BeamingStatusKeyEntry({
     required this.key,
     required this.status,
     this.message,
+  });
+
+  Map<String, Object?> toJson() {
+    return <String, Object?>{
+      'key': key.toJson(),
+      'status': status,
+      if (message != null) 'message': message,
+    };
+  }
+}
+
+class BeamingStatusKeyItem extends _BeamingStatusKeyEntry {
+  const BeamingStatusKeyItem({
+    required super.key,
+    required super.status,
+    super.message,
   });
 
   factory BeamingStatusKeyItem.fromJson(Map<String, Object?> json) {
@@ -62,14 +78,6 @@ class BeamingStatusKeyItem {
       status: _requireString(json, 'status'),
       message: json['message'] as String?,
     );
-  }
-
-  Map<String, Object?> toJson() {
-    return <String, Object?>{
-      'key': key.toJson(),
-      'status': status,
-      if (message != null) 'message': message,
-    };
   }
 }
 
@@ -150,15 +158,11 @@ class BeamingGetKeyValueResponseData {
   }
 }
 
-class BeamingNewKeyChildResponse {
-  final BeamingKeyParams key;
-  final String status;
-  final String? message;
-
+class BeamingNewKeyChildResponse extends _BeamingStatusKeyEntry {
   const BeamingNewKeyChildResponse({
-    required this.key,
-    required this.status,
-    this.message,
+    required super.key,
+    required super.status,
+    super.message,
   });
 
   factory BeamingNewKeyChildResponse.fromJson(Map<String, Object?> json) {
@@ -167,14 +171,6 @@ class BeamingNewKeyChildResponse {
       status: _requireString(json, 'status'),
       message: json['message'] as String?,
     );
-  }
-
-  Map<String, Object?> toJson() {
-    return <String, Object?>{
-      'key': key.toJson(),
-      'status': status,
-      if (message != null) 'message': message,
-    };
   }
 }
 

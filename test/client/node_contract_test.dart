@@ -40,19 +40,7 @@ void main() {
     final harness = createBeamingInMemoryHarness();
     addTearDown(harness.close);
 
-    await harness.client.setNode(
-      'roots/oak',
-      [
-        BeamingValue(
-          key: BeamingClientKey(keyId: 'roots/oak/title', version: 'v-2'),
-          value: 'oak',
-        ),
-        BeamingValue(
-          key: BeamingClientKey(keyId: 'roots/oak/status', version: 'v-3'),
-          value: 'healthy',
-        ),
-      ],
-    );
+    await harness.client.setNode('roots/oak', _oakNodeValues());
 
     final nodeValues = await harness.client.getNode(
       'roots/oak',
@@ -78,15 +66,8 @@ void main() {
     final harness = createBeamingInMemoryHarness();
     addTearDown(harness.close);
 
-    await harness.client.setNode(
-      'roots/oak',
-      [
-        BeamingValue(
-          key: BeamingClientKey(keyId: 'roots/oak/title', version: 'v-2'),
-          value: 'oak',
-        ),
-      ],
-    );
+    await harness.client
+        .setNode('roots/oak', _oakNodeValues().take(1).toList());
 
     final nodeValues = await harness.client.getNode(
       'roots/oak',
@@ -97,4 +78,17 @@ void main() {
     expect(nodeValues.single.key.keyId, 'roots/oak/title');
     expect(nodeValues.single.value, 'oak');
   });
+}
+
+List<BeamingValue> _oakNodeValues() {
+  return [
+    BeamingValue(
+      key: BeamingClientKey(keyId: 'roots/oak/title', version: 'v-2'),
+      value: 'oak',
+    ),
+    BeamingValue(
+      key: BeamingClientKey(keyId: 'roots/oak/status', version: 'v-3'),
+      value: 'healthy',
+    ),
+  ];
 }
