@@ -451,3 +451,34 @@ The package should surface enough structured context for higher layers to build:
 
 without forcing all consumers to adopt the same observability stack.
 
+## 06 Testing Strategy
+
+How the client should be validated against the real mock-server contract.
+
+### 01 End-to-End Tests
+
+End-to-end Dart tests should exercise this client against the external chatty mock server implementation.
+
+#### End-to-End Test Coverage
+
+| expected_coverage | test_area | why_it_matters |
+| --- | --- | --- |
+| Dart e2e tests should verify bootstrap and replace flows against a running chatty mock server | snapshot flows | confirms the client speaks the real REST contract rather than only local DTO assumptions |
+| Dart e2e tests should verify targeted reads writes ordering and item-level statuses against chatty | node flows | protects the key-value style update model that application code will rely on |
+| Dart e2e tests should verify provisional localKeyId mapping and returned server keys against chatty | create flows | ensures client-side creation helpers stay compatible with server behavior |
+| Dart e2e tests should verify subscribe unsubscribe ping pong and event decoding against chatty | websocket flows | keeps the light websocket surface aligned with the mock server contract |
+| Dart e2e tests should verify invalid outdated and other transport-visible failures against chatty | error flows | prevents regressions where the client hides or rewrites useful server signals |
+| Dart e2e tests should run this client library against the mock server hosted at https://github.com/flarebyte/chatty-ratatoskr | cross-repo compatibility | anchors client behavior against the intended external reference implementation |
+
+#### End-to-End Testing Principles
+
+This library should include end-to-end tests written in Dart that validate the client against a running `chatty` mock server.
+
+The purpose of these tests is not to re-test the server internals, but to ensure that `beaming_yggdrasil` remains compatible with the real external contract exposed by `chatty`.
+
+The reference mock server for these tests is `flarebyte/chatty-ratatoskr`:
+
+- https://github.com/flarebyte/chatty-ratatoskr
+
+These tests should focus on client-visible behavior, wire compatibility, and transport semantics rather than implementation details inside either repository.
+

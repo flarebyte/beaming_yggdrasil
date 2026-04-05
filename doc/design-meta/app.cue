@@ -79,6 +79,14 @@ reports: [{
 			description: "Observability should be customizable and implementation-agnostic while the final operational model is still evolving."
 			notes: ["dart.client.observability-principles", "dart.client.diagnostics-hooks"]
 		}]
+	}, {
+		title:       "06 Testing Strategy"
+		description: "How the client should be validated against the real mock-server contract."
+		sections: [{
+			title:       "01 End-to-End Tests"
+			description: "End-to-end Dart tests should exercise this client against the external chatty mock server implementation."
+			notes: ["dart.client.e2e-testing-principles", "dart.client.e2e-testing"]
+		}]
 	}]
 }]
 
@@ -249,5 +257,28 @@ notes: [
 		filepath: "examples/diagnostics-hooks.csv"
 		arguments: ["format-csv=table"]
 		labels: ["observability", "hooks", "csv"]
+	},
+	{
+		name:  "dart.client.e2e-testing-principles"
+		title: "End-to-End Testing Principles"
+		markdown: """
+		This library should include end-to-end tests written in Dart that validate the client against a running `chatty` mock server.
+
+		The purpose of these tests is not to re-test the server internals, but to ensure that `beaming_yggdrasil` remains compatible with the real external contract exposed by `chatty`.
+
+		The reference mock server for these tests is `flarebyte/chatty-ratatoskr`:
+
+		- https://github.com/flarebyte/chatty-ratatoskr
+
+		These tests should focus on client-visible behavior, wire compatibility, and transport semantics rather than implementation details inside either repository.
+		"""
+		labels: ["testing", "e2e", "markdown"]
+	},
+	{
+		name:  "dart.client.e2e-testing"
+		title: "End-to-End Test Coverage"
+		filepath: "examples/e2e-testing.csv"
+		arguments: ["format-csv=table"]
+		labels: ["testing", "e2e", "csv"]
 	},
 ]
