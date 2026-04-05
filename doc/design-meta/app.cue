@@ -37,6 +37,7 @@ reports: [{
 				"dart.client.scope",
 				"dart.client.planned-surface",
 				"dart.client.api-direction",
+				"dart.client.api-surfaces",
 				"dart.client.cache-integration-primitives",
 				"dart.client.simplified-dart-api",
 				"dart.client.stream-integration",
@@ -160,6 +161,13 @@ notes: [
 		labels: ["surface", "csv"]
 	},
 	{
+		name:  "dart.client.api-surfaces"
+		title: "API Surfaces"
+		filepath: "examples/api-surfaces.csv"
+		arguments: ["format-csv=table"]
+		labels: ["api", "surface", "csv"]
+	},
+	{
 		name:  "dart.client.cache-integration-primitives"
 		title: "Cache Integration Primitives"
 		filepath: "examples/cache-integration.csv"
@@ -170,7 +178,7 @@ notes: [
 		name:  "dart.client.simplified-dart-api"
 		title: "Simplified Dart API Example"
 		markdown: """
-		A higher-level Dart surface can sit on top of the wire-level DTOs:
+		A higher-level Dart surface can sit on top of the wire-level DTOs, with an optional Rx-friendly adapter layered on top of the classic client:
 
 		    class BeamingClientKey {
 		      final String keyId;
@@ -214,6 +222,16 @@ notes: [
 		      Stream<BeamingEvent> watch(List<String> rootKeyIds);
 		    }
 
+		    abstract class BeamingYggdrasilRxClient {
+		      Stream<List<BeamingValue>> snapshot$(String rootKeyId);
+		      Stream<List<BeamingValue>> node$(String rootKeyId, List<String> keyIds);
+		      Stream<List<BeamingWriteResult>> setNode$(
+		        String rootKeyId,
+		        List<BeamingValue> values,
+		      );
+		      Stream<BeamingEvent> watch$(List<String> rootKeyIds);
+		    }
+
 		    abstract class BeamingYggdrasilTestingClient {
 		      Future<void> replaceSnapshot(
 		        String rootKeyId,
@@ -223,7 +241,8 @@ notes: [
 
 		Design guidance:
 
-		- keep this API as a convenience layer over the wire-level DTOs
+		- keep the classic `BeamingYggdrasilClient` as the primary public API
+		- offer the Rx-friendly API as an adapter layer rather than the only surface
 		- snapshots are created by the server and read by the real client
 		- snapshot replacement belongs in a separate testing or mock-control client
 		- preserve access to underlying statuses and versions

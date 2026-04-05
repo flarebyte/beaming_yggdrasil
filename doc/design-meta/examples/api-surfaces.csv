@@ -1,0 +1,4 @@
+surface,role,why_it_exists
+classic Dart client,primary public API using Future and Stream,keeps the library idiomatic for Dart users without forcing an Rx dependency
+Rx-friendly adapter,optional secondary API layered on top of the classic client,makes retry reconnect composition and derived state streams easier for Rx-oriented consumers
+testing client,separate mock-control or testing surface,keeps test-only capabilities out of the real end-user client API

@@ -70,6 +70,14 @@ Major client areas, scope boundaries, and preferred API direction.
 | hiding wire status values behind overly opinionated abstractions | typed status enums or string constants |
 | committing the package to heavyweight keyId modeling too early | a transport error model that preserves server status and message content |
 
+#### API Surfaces
+
+| role | surface | why_it_exists |
+| --- | --- | --- |
+| primary public API using Future and Stream | classic Dart client | keeps the library idiomatic for Dart users without forcing an Rx dependency |
+| optional secondary API layered on top of the classic client | Rx-friendly adapter | makes retry reconnect composition and derived state streams easier for Rx-oriented consumers |
+| separate mock-control or testing surface | testing client | keeps test-only capabilities out of the real end-user client API |
+
 #### Cache Integration Primitives
 
 | primitive | why_it_helps_a_separate_cache_library |
@@ -105,7 +113,7 @@ Major client areas, scope boundaries, and preferred API direction.
 
 #### Simplified Dart API Example
 
-A higher-level Dart surface can sit on top of the wire-level DTOs:
+A higher-level Dart surface can sit on top of the wire-level DTOs, with an optional Rx-friendly adapter layered on top of the classic client:
 
     class BeamingClientKey {
       final String keyId;
@@ -149,6 +157,16 @@ A higher-level Dart surface can sit on top of the wire-level DTOs:
       Stream<BeamingEvent> watch(List<String> rootKeyIds);
     }
 
+    abstract class BeamingYggdrasilRxClient {
+      Stream<List<BeamingValue>> snapshot$(String rootKeyId);
+      Stream<List<BeamingValue>> node$(String rootKeyId, List<String> keyIds);
+      Stream<List<BeamingWriteResult>> setNode$(
+        String rootKeyId,
+        List<BeamingValue> values,
+      );
+      Stream<BeamingEvent> watch$(List<String> rootKeyIds);
+    }
+
     abstract class BeamingYggdrasilTestingClient {
       Future<void> replaceSnapshot(
         String rootKeyId,
@@ -158,7 +176,8 @@ A higher-level Dart surface can sit on top of the wire-level DTOs:
 
 Design guidance:
 
-- keep this API as a convenience layer over the wire-level DTOs
+- keep the classic `BeamingYggdrasilClient` as the primary public API
+- offer the Rx-friendly API as an adapter layer rather than the only surface
 - snapshots are created by the server and read by the real client
 - snapshot replacement belongs in a separate testing or mock-control client
 - preserve access to underlying statuses and versions
@@ -181,7 +200,7 @@ Design guidance:
 | stream model | prefer Rx-style stream composition over imperative callback chains | reactive composition makes retry backoff and reconnection policies easier to layer without tangling transport code |
 | immutability | pass immutable DTOs and immutable event snapshots through the stream pipeline | immutable values reduce accidental shared-state bugs during retries buffering and fan-out |
 | retry support | model retries as higher-layer operators or policies around the stream rather than hidden transport behavior | keeps retry explicit testable and replaceable |
-| integration surface | offer adapters that fit Dart Stream and Rx-oriented usage rather than a single mandatory abstraction | lets consumers adopt the library in different runtimes while keeping one event model |
+| integration surface | offer both a classic Future and Stream surface and an optional Rx-friendly adapter | lets consumers choose idiomatic Dart or richer reactive composition without splitting the core object model |
 | transport boundary | keep raw transport separate from decoded reactive pipelines | preserves a narrow transport contract while still allowing rich stream orchestration above it |
 
 #### Use Cases
