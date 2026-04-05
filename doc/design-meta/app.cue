@@ -37,6 +37,7 @@ reports: [{
 				"dart.client.scope",
 				"dart.client.planned-surface",
 				"dart.client.api-direction",
+				"dart.client.stream-integration",
 				"dart.client.source-layout",
 				"dart.client.usecases",
 			]
@@ -146,6 +147,13 @@ notes: [
 		filepath: "examples/api-direction.csv"
 		arguments: ["format-csv=table"]
 		labels: ["api", "csv"]
+	},
+	{
+		name:  "dart.client.stream-integration"
+		title: "Stream Integration Model"
+		filepath: "examples/stream-integration.csv"
+		arguments: ["format-csv=table"]
+		labels: ["streams", "rx", "csv"]
 	},
 	{
 		name:  "dart.client.rest-actions"
