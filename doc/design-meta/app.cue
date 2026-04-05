@@ -69,6 +69,14 @@ reports: [{
 			description: "Why this package keeps key handling intentionally lightweight."
 			notes: ["dart.client.key-boundary", "dart.client.common"]
 		}]
+	}, {
+		title:       "05 Diagnostics and Observability"
+		description: "Hooks and signals for understanding transport behavior without locking the package into one tooling stack."
+		sections: [{
+			title:       "01 Diagnostics Hooks"
+			description: "Observability should be customizable and implementation-agnostic while the final operational model is still evolving."
+			notes: ["dart.client.observability-principles", "dart.client.diagnostics-hooks"]
+		}]
 	}]
 }]
 
@@ -191,5 +199,32 @@ notes: [
 		filepath: "examples/source-layout.csv"
 		arguments: ["format-csv=table"]
 		labels: ["layout", "csv"]
+	},
+	{
+		name:  "dart.client.observability-principles"
+		title: "Observability Principles"
+		markdown: """
+		Diagnostics and observability should be treated as first-class extension points rather than hard-coded framework choices.
+
+		The client should prefer hooks, listeners, or pluggable adapters over committing early to one logging, tracing, or metrics dependency. That keeps the package usable in different environments while the final operational model is still unsettled.
+
+		The package should surface enough structured context for higher layers to build:
+
+		- logging
+		- tracing
+		- metrics
+		- audit trails
+		- custom debugging tools
+
+		without forcing all consumers to adopt the same observability stack.
+		"""
+		labels: ["observability", "markdown"]
+	},
+	{
+		name:  "dart.client.diagnostics-hooks"
+		title: "Diagnostics Hooks"
+		filepath: "examples/diagnostics-hooks.csv"
+		arguments: ["format-csv=table"]
+		labels: ["observability", "hooks", "csv"]
 	},
 ]

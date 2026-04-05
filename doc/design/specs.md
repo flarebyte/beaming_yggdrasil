@@ -386,3 +386,38 @@ export type EventEnvelope = {
 | carry mock or auth-related values through the payload without interpreting them deeply | server controls forcing and validation behavior | secureKeyId |
 | limit client validation to nullability and obvious request-shape checks | avoid duplicating parsing logic that may move into another package | key-validation |
 
+## 05 Diagnostics and Observability
+
+Hooks and signals for understanding transport behavior without locking the package into one tooling stack.
+
+### 01 Diagnostics Hooks
+
+Observability should be customizable and implementation-agnostic while the final operational model is still evolving.
+
+#### Diagnostics Hooks
+
+| concern | customisation_hook | recommended_behavior | why_it_matters |
+| --- | --- | --- | --- |
+| transport lifecycle | connection state listener or stream | emit connect open closing closed and failure transitions | applications need to observe readiness and degraded sessions without parsing logs |
+| REST request execution | request hook with operation metadata | expose request start finish failure and latency events | callers may want tracing metrics or custom audit pipelines |
+| WebSocket session activity | session event hook | expose subscribe unsubscribe ping pong and reconnect-related events | light websocket support still needs visibility when sessions flap or drift |
+| decode and protocol failures | error hook with typed context | surface malformed payload and contract mismatch details | integrators need to distinguish transport outages from protocol bugs |
+| retry and recovery decisions | policy hook invoked around recovery actions | emit when the higher layer retries refreshes or re-subscribes | the final recovery strategy is still evolving and should stay replaceable |
+| sensitive data handling | redaction hook or formatter hook | allow redaction before diagnostics leave the library | observability should not force unsafe payload logging |
+
+#### Observability Principles
+
+Diagnostics and observability should be treated as first-class extension points rather than hard-coded framework choices.
+
+The client should prefer hooks, listeners, or pluggable adapters over committing early to one logging, tracing, or metrics dependency. That keeps the package usable in different environments while the final operational model is still unsettled.
+
+The package should surface enough structured context for higher layers to build:
+
+- logging
+- tracing
+- metrics
+- audit trails
+- custom debugging tools
+
+without forcing all consumers to adopt the same observability stack.
+
