@@ -88,6 +88,14 @@ reports: [{
 			description: "End-to-end Dart tests should exercise this client against the external chatty mock server implementation."
 			notes: ["dart.client.e2e-testing-principles", "dart.client.e2e-testing"]
 		}]
+	}, {
+		title:       "07 Implementation Guidance"
+		description: "Recommended Dart implementation style for building and publishing this library."
+		sections: [{
+			title:       "01 Dart Library Style"
+			description: "Implementation should follow idiomatic Dart API design while preserving the package-specific boundaries described in this spec."
+			notes: ["dart.client.implementation-principles", "dart.client.implementation-guidance"]
+		}]
 	}]
 }]
 
@@ -347,5 +355,30 @@ notes: [
 		filepath: "examples/e2e-testing.csv"
 		arguments: ["format-csv=table"]
 		labels: ["testing", "e2e", "csv"]
+	},
+	{
+		name:  "dart.client.implementation-principles"
+		title: "Implementation Principles"
+		markdown: """
+		The implementation should follow idiomatic Dart library design.
+
+		Use the official Dart guidance as the baseline for public API shape and package publishing:
+
+		- Effective Dart: Design: https://dart.dev/effective-dart/design
+		- Effective Dart: Style: https://dart.dev/effective-dart/style
+		- Publishing packages: https://dart.dev/tools/pub/publishing
+
+		Within this library, prefer immutable public objects and repository-specific builder types where object construction is non-trivial. Dart does not require builders for simple value classes, but builders are a reasonable pattern here when they help keep transport-facing objects immutable while avoiding large fragile constructors.
+
+		For published library code, the package should also follow Dart package conventions closely enough that `dart pub publish --dry-run` is a routine validation step rather than a late packaging surprise.
+		"""
+		labels: ["implementation", "dart", "markdown"]
+	},
+	{
+		name:  "dart.client.implementation-guidance"
+		title: "Implementation Guidance"
+		filepath: "examples/implementation-guidance.csv"
+		arguments: ["format-csv=table"]
+		labels: ["implementation", "dart", "csv"]
 	},
 ]

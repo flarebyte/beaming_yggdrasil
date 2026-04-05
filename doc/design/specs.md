@@ -546,3 +546,36 @@ The reference mock server for these tests is `flarebyte/chatty-ratatoskr`:
 
 These tests should focus on client-visible behavior, wire compatibility, and transport semantics rather than implementation details inside either repository.
 
+## 07 Implementation Guidance
+
+Recommended Dart implementation style for building and publishing this library.
+
+### 01 Dart Library Style
+
+Implementation should follow idiomatic Dart API design while preserving the package-specific boundaries described in this spec.
+
+#### Implementation Guidance
+
+| recommendation | topic | why_it_matters |
+| --- | --- | --- |
+| follow Effective Dart design and style guidance for public library APIs | dart-api-style | keeps the package idiomatic and easier for Dart users to adopt |
+| prefer immutable value objects and final fields for transport-facing DTOs | immutability | works well with stream pipelines retries and cache integration |
+| use builders for assembling complex request or result objects when constructors would become noisy or error-prone | builder-pattern | helps preserve immutable public objects while keeping object creation ergonomic |
+| prefer Dart naming conventions and avoid Java-style getter prefixes | naming | makes the library feel native in the Dart ecosystem |
+| follow Dart package layout and publishing conventions for public libraries | package-layout | reduces friction when validating and publishing the package |
+| run dart pub publish --dry-run and keep the package warning-free before publishing | publish-validation | catches packaging and ecosystem integration issues early |
+
+#### Implementation Principles
+
+The implementation should follow idiomatic Dart library design.
+
+Use the official Dart guidance as the baseline for public API shape and package publishing:
+
+- Effective Dart: Design: https://dart.dev/effective-dart/design
+- Effective Dart: Style: https://dart.dev/effective-dart/style
+- Publishing packages: https://dart.dev/tools/pub/publishing
+
+Within this library, prefer immutable public objects and repository-specific builder types where object construction is non-trivial. Dart does not require builders for simple value classes, but builders are a reasonable pattern here when they help keep transport-facing objects immutable while avoiding large fragile constructors.
+
+For published library code, the package should also follow Dart package conventions closely enough that `dart pub publish --dry-run` is a routine validation step rather than a late packaging surprise.
+
