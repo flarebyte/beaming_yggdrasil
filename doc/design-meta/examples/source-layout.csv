@@ -1,0 +1,5 @@
+path,role
+doc/design-meta/app.cue,assembles the canonical Flyb model and report structure
+doc/design-meta/examples/*.csv,stores durable reviewable design tables
+doc/design-meta/examples/*.ts,stores payload-shape examples for transport contracts
+doc/design/specs.md,generated markdown output from Flyb

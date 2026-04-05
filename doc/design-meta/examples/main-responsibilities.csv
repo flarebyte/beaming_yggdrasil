@@ -1,0 +1,7 @@
+responsibility,why_it_matters
+send REST requests that match the mock server payload formats,client calls need to align with the transport contract
+decode shallow REST response envelopes,applications need stable DTOs instead of raw maps
+open and manage the optional WebSocket connection,realtime sync should be available without extra protocol glue in app code
+send WebSocket commands and decode event messages,the client should cover both command and subscription traffic
+preserve correlation ids and status values,callers need enough wire detail to debug and recover from failures
+expose practical Dart-friendly client abstractions over the wire DTOs,the library should feel like a client package rather than a bag of JSON helpers

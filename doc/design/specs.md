@@ -6,136 +6,79 @@ Transport-first Dart client spec for the chatty mock server.
 
 Purpose, scope, and package boundary.
 
-### 01 Intent
+### 01 Purpose and Scope
 
-What the Dart client should own and what it should leave to other libraries.
+Repository target, client goal, and transport-first ownership boundaries.
 
-#### Client Overview
+#### Design Ownership
 
-```markdown
-# beaming_yggdrasil Overview
+| category | not_owned_by_client | owned_by_client |
+| --- | --- | --- |
+| transport-dtos | authoritative protocol evolution | request and response DTOs |
+| rest-surface | server-side business logic | REST endpoint calls |
+| websocket-surface | event-store or broker persistence | WebSocket command and event payloads |
+| envelopes | deep domain state derivation | shallow envelope handling |
+| correlation | server-side request orchestration | preserve request ids and correlation ids |
+| error-handling | changing canonical server status semantics | practical client-side error mapping |
 
-## Purpose
+#### Client Goals
 
-`beaming_yggdrasil` should be a Dart client library for the `chatty` mock server and compatible Yggdrasil-style services.
+| goal | rationale |
+| --- | --- |
+| provide a Dart client for the chatty mock server | give Dart applications a practical transport client for the mock Yggdrasil service |
+| conform to the shipped REST and WebSocket payload formats | keep the client aligned with the server contracts it is expected to speak |
+| keep key handling intentionally lightweight | avoid overcommitting the package to server-owned key semantics |
+| avoid embedding strong keyId parsing or validation rules | leave deep key interpretation to a dedicated key library if one is needed later |
 
-The library should make the transport contract easy to use from Dart applications without pretending to be the authority on `keyId` structure.
+#### Explicit Non-Goals
 
-## Main Responsibilities
+| non_goal | reason |
+| --- | --- |
+| parse the full logical key grammar | this package should not become the authority on key semantics |
+| derive authoritative kind values from keyId | the server remains the current source of truth for kind derivation |
+| duplicate server access-control logic | permissions should not be reimplemented in the Dart transport client |
+| mix local persistence concerns into the transport contract | offline storage belongs in a higher-level package or application layer |
 
-- send REST requests that match the mock server payload formats
-- decode shallow REST response envelopes
-- open and manage the optional WebSocket connection
-- send WebSocket commands and decode event messages
-- preserve correlation ids and status values
-- expose practical Dart-friendly client abstractions over the wire DTOs
+#### Main Responsibilities
 
-## Explicit Non-Goals
+| responsibility | why_it_matters |
+| --- | --- |
+| send REST requests that match the mock server payload formats | client calls need to align with the transport contract |
+| decode shallow REST response envelopes | applications need stable DTOs instead of raw maps |
+| open and manage the optional WebSocket connection | realtime sync should be available without extra protocol glue in app code |
+| send WebSocket commands and decode event messages | the client should cover both command and subscription traffic |
+| preserve correlation ids and status values | callers need enough wire detail to debug and recover from failures |
+| expose practical Dart-friendly client abstractions over the wire DTOs | the library should feel like a client package rather than a bag of JSON helpers |
 
-- do not parse the full logical key grammar in this package
-- do not derive authoritative `kind` values from `keyId`
-- do not duplicate server access-control logic
-- do not mix local persistence concerns into the transport contract
+#### Client Summary
 
-## Key Boundary
+`beaming_yggdrasil` is a transport-first Dart client library for the `chatty` mock server and compatible Yggdrasil-style services.
 
-For this client, `keyId` should normally be treated as an opaque string.
+The package should make the wire contract easy to use from Dart without pretending to be the authority on `keyId` structure or other server-owned semantics.
 
-Minimal expectations:
+### 02 Product Shape
 
-- a request may require a `keyId` string
-- the client may preserve optional client-supplied `kind` hints in DTOs
-- the client must not invent server-derived key semantics locally unless a future dedicated key library is introduced
+Major client areas, scope boundaries, and preferred API direction.
 
-If richer key tooling is needed later, it should live in a separate Dart package and compose with `beaming_yggdrasil`.
+#### Practical API Direction
 
-## Planned Surface
+| avoid | provide |
+| --- | --- |
+| a large code-generated schema framework before the core flows are pleasant to use | DTO classes for request and response payloads |
+| overengineering transport composition before the main operations are stable | a small HTTP client wrapper |
+| forcing applications to assemble subscription lifecycle handling manually | a WebSocket session wrapper |
+| hiding wire status values behind overly opinionated abstractions | typed status enums or string constants |
+| committing the package to heavyweight keyId modeling too early | a transport error model that preserves server status and message content |
 
-The client spec currently assumes these major areas:
+#### Planned Surface
 
-- snapshot client methods
-- node read and write client methods
-- create client methods
-- optional admin commands for test harness usage
-- optional WebSocket subscription and event handling
-
-## Practical API Direction
-
-The eventual Dart package should likely provide:
-
-- DTO classes for request and response payloads
-- a small HTTP client wrapper
-- a WebSocket session wrapper
-- typed status enums or string constants
-- a transport error model that preserves server status and message content
-
-It should avoid:
-
-- a large code-generated schema framework before the core flows are pleasant to use
-- committing the package to heavyweight `keyId` modeling too early
-```
-
-#### beaming_yggdrasil Specs
-
-```markdown
-# beaming_yggdrasil Specs
-
-This folder contains draft specs for the Dart client library `beaming_yggdrasil`.
-
-Repository target:
-
-- GitHub project: `beaming_yggdrasil`
-
-Client goal:
-
-- provide a Dart client for the `chatty` mock server
-- conform to the shipped REST and WebSocket payload formats
-- keep key handling intentionally lightweight
-- avoid embedding strong `keyId` parsing or validation rules that are better owned by a separate key library
-
-## Design Intent
-
-`beaming_yggdrasil` should be a transport-first client library.
-
-It should own:
-
-- request and response DTOs
-- REST endpoint calls
-- WebSocket command and event payloads
-- shallow envelope handling
-- correlation id plumbing
-- practical client-side error mapping
-
-It should not own:
-
-- authoritative `keyId` grammar
-- deep key derivation rules
-- full access-scope evaluation
-- server-side kind derivation logic
-
-## Folder Layout
-
-- [overview.md](/Users/olivier/Documents/github/chatty-ratatoskr/temp/dart/overview.md)
-- [examples/usecases.csv](/Users/olivier/Documents/github/chatty-ratatoskr/temp/dart/examples/usecases.csv)
-- [examples/client-scope.csv](/Users/olivier/Documents/github/chatty-ratatoskr/temp/dart/examples/client-scope.csv)
-- [examples/rest-actions.csv](/Users/olivier/Documents/github/chatty-ratatoskr/temp/dart/examples/rest-actions.csv)
-- [examples/websocket-actions.csv](/Users/olivier/Documents/github/chatty-ratatoskr/temp/dart/examples/websocket-actions.csv)
-- [examples/error-mapping.csv](/Users/olivier/Documents/github/chatty-ratatoskr/temp/dart/examples/error-mapping.csv)
-- [examples/key-boundary.csv](/Users/olivier/Documents/github/chatty-ratatoskr/temp/dart/examples/key-boundary.csv)
-- [examples/common.ts](/Users/olivier/Documents/github/chatty-ratatoskr/temp/dart/examples/common.ts)
-- [examples/rest-client.ts](/Users/olivier/Documents/github/chatty-ratatoskr/temp/dart/examples/rest-client.ts)
-- [examples/websocket-client.ts](/Users/olivier/Documents/github/chatty-ratatoskr/temp/dart/examples/websocket-client.ts)
-
-## Notes
-
-- The `.ts` files are payload-shape examples, not implementation language requirements.
-- The CSV files are intended to stay readable and easy to review without heavy Flyb or CUE machinery.
-- The source protocol reference remains [doc/design/yggdrasil-mock-server.md](/Users/olivier/Documents/github/chatty-ratatoskr/doc/design/yggdrasil-mock-server.md).
-```
-
-### 02 Use Cases
-
-Core client workflows and success criteria.
+| intent | surface_area |
+| --- | --- |
+| bootstrap or replace state through snapshot endpoints | snapshot client methods |
+| support targeted reads and writes without full snapshot reloads | node read and write client methods |
+| map provisional local keys to server-generated keys | create client methods |
+| keep mock-only controls available without polluting core application flows | optional admin commands for test harness usage |
+| allow incremental updates after initial bootstrap | optional WebSocket subscription and event handling |
 
 #### Client Scope
 
@@ -147,6 +90,15 @@ Core client workflows and success criteria.
 | error-model | map HTTP and websocket statuses into practical client errors | changing server status semantics |
 | test-support | support mock-server admin flows as optional APIs | production-only operations not present in chatty |
 | local-state | allow app code to build on DTOs if needed | shipping a full offline sync engine in this package |
+
+#### Source Layout
+
+| path | role |
+| --- | --- |
+| doc/design-meta/app.cue | assembles the canonical Flyb model and report structure |
+| doc/design-meta/examples/*.csv | stores durable reviewable design tables |
+| doc/design-meta/examples/*.ts | stores payload-shape examples for transport contracts |
+| doc/design/specs.md | generated markdown output from Flyb |
 
 #### Use Cases
 
