@@ -1,8 +1,19 @@
 # Diff Against Historical Decisions
 
-This note compares [HISTORICAL_DECISIONS.md](/Users/olivier/Documents/github/beaming_yggdrasil/HISTORICAL_DECISIONS.md) with the current generated spec at [doc/design/specs.md](/Users/olivier/Documents/github/beaming_yggdrasil/doc/design/specs.md).
+This note compares `HISTORICAL_DECISIONS.md` with the current generated spec at `doc/design/specs.md`.
 
 The old direction assumed a message-centric sync framework with WebSocket replay as the main transport story. The current design is narrower and more pragmatic: REST owns the main state-changing and state-fetching flows, while WebSocket is now a light optional channel for subscription updates and reachability.
+
+## What The Draft `lib/` Implementation Shows
+
+The draft code under `lib/src/messaging/message.dart`, `lib/src/messaging/transport.dart`, `lib/src/messaging/transport_types.dart`, `lib/src/messaging/rx/transport_rx.dart`, and `lib/src/messaging/rx/transport_rx_impl.dart` makes the transition state very visible.
+
+Two implementation threads coexist:
+
+- a broad old-spec `Message` model that still assumes a generic routed messaging system
+- a lower-level `Transport` and `TransportRx` layer that is closer to what the new spec actually needs for light WebSocket support
+
+That split is useful evidence when deciding what should be retained and what should be retired.
 
 ## Ideas Already Carried Forward
 
@@ -11,6 +22,7 @@ The old direction assumed a message-centric sync framework with WebSocket replay
 - Optimistic write semantics are preserved. The new spec keeps exact server version strings and surfaces conflict behavior instead of hiding it.
 - Optional WebSocket support is preserved, but reduced in scope. The new spec still supports subscribe, unsubscribe, ping, pong, status, and event messages.
 - The split between transport DTOs and higher-level application behavior is preserved. The new spec still avoids hard-linking the package to storage or business logic.
+- The draft `Transport` abstraction is a good match for the new design direction. It keeps framing, retry, reconnection, auth, and payload encoding out of the transport interface, which is consistent with REST being primary and WebSocket remaining deliberately light.
 
 ## Good Historical Ideas Missing From The New Spec
 
@@ -79,6 +91,34 @@ Recommendation: document whether the preferred surface is:
 
 This matters because the old design correctly identified that local apps need integration points, not just DTO definitions.
 
+### 6. A clear migration path away from the generic `Message` type
+
+The current code still centers `Message` in `lib/src/messaging/message.dart`, which requires fields such as:
+
+- `source`
+- `destination`
+- `applicationVersion`
+- `value`
+
+and optionally carries:
+
+- `sequence`
+- `position`
+- `integrityHash`
+- `size`
+- `contentType`
+- `language`
+
+That structure maps closely to the historical messaging architecture, but only loosely to the new REST and light-WebSocket contract.
+
+Recommendation: the new spec should explicitly say whether `Message` is:
+
+- a temporary historical compatibility type to be removed
+- an internal event envelope used only in one narrow subsystem
+- or a public abstraction that still deserves first-class support
+
+Without that decision, the codebase risks keeping an attractive but misaligned domain type simply because it already exists.
+
 ## Historical Ideas That Should Stay Out
 
 These are mostly tied to the older chat-oriented sync model and should not be copied back blindly.
@@ -111,6 +151,71 @@ The old note discussed local caches, replay buffers, retry state, and device-sid
 
 Those concerns may still matter at the application or higher-level SDK layer, but they should not be pulled back into `beaming_yggdrasil` unless the package is intentionally widened.
 
+### 5. Making the public Dart API revolve around `MessageBuilder`
+
+The builder in `lib/src/messaging/message.dart` bakes the old message shape directly into the construction flow. That is a good fit for the historical system, but a poor default for the newer contract where the main public surfaces are likely to be:
+
+- REST request and response DTOs
+- WebSocket command DTOs
+- WebSocket event DTOs
+
+Keeping `MessageBuilder` as the main authoring surface would pull the package back toward a generic messaging framework instead of a transport-first client.
+
+## Implementation-Specific Gaps And Risks
+
+Reviewing the draft code reveals a few concrete gaps that are worth recording because they sharpen the spec discussion.
+
+### 1. The transport layer is more mature than the domain model
+
+The `Transport` contract is intentionally narrow and reusable. It already encodes several good decisions:
+
+- no implicit payload encoding
+- no reconnection policy inside the transport interface
+- no auth/session coupling
+- ordered delivery expectations
+- explicit lifecycle state reporting
+
+This is the strongest piece of alignment between implementation and the new spec. The architecture should probably build from here rather than from `Message`.
+
+### 2. The draft domain model still assumes routed chat-like traffic
+
+Required `source` and `destination` fields in `lib/src/messaging/message.dart` suggest peer-style addressing, not the REST endpoint plus optional subscription model described in the new spec.
+
+That is a concrete sign that the current implementation is still biased toward the old architecture, not merely inspired by it.
+
+### 3. The Rx integration idea is still useful, but its scope should narrow
+
+`lib/src/messaging/rx/transport_rx.dart` and `lib/src/messaging/rx/transport_rx_impl.dart` show that the old RxDart thought process was not entirely misplaced.
+
+What still looks useful:
+
+- hot state streams
+- buffering policy as an opt-in concern
+- explicit outbound error streams
+- separation between raw transport and reactive adapters
+
+What should change:
+
+- the reactive layer should adapt WebSocket session behavior, not revive the old generic message bus
+- buffering should be framed as transport convenience, not as offline sync or durable replay
+
+### 4. There is at least one draft-level code health issue in the Rx split
+
+`lib/src/messaging/rx/transport_rx_impl.dart` uses `part of 'transport_rx.dart';`, but `lib/src/messaging/rx/transport_rx.dart` is written like a standalone library file rather than a `part` owner.
+
+That looks like a draft integration problem rather than a design choice, but it matters because it reinforces that the Rx layer is still exploratory and should not yet be treated as proof that the old architecture was correct.
+
+### 5. The implementation currently exposes no REST-aligned DTO layer
+
+The new spec is organized around concrete REST operations and light WebSocket commands/events. The code in `lib/` does not yet expose corresponding public DTOs for:
+
+- snapshot requests and responses
+- node requests and responses
+- create requests and responses
+- subscribe, unsubscribe, ping, and event payloads
+
+That absence is important. It means the implementation evidence currently comes mostly from the old messaging draft and the generic transport layer, not from a first pass at the new transport-first contract.
+
 ## Recommended Additions To The New Spec
 
 If we want to recover the best parts of the historical design without regressing into the older WebSocket-heavy model, the best additions are:
@@ -120,6 +225,8 @@ If we want to recover the best parts of the historical design without regressing
 3. Add diagnostics and observability hooks as a first-class transport concern.
 4. Clarify the intended Dart integration surface for async streams, callbacks, or adapters.
 5. Clarify whether binary content references and metadata are supported, ignored, or deferred.
+6. State explicitly that the old generic `Message` model is either transitional or out of scope for the public API.
+7. Build the next implementation pass around REST DTOs and narrow WebSocket DTOs, reusing `Transport` only where it actually helps.
 
 ## Bottom Line
 
