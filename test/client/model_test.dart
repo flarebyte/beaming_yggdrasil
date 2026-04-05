@@ -30,10 +30,7 @@ void main() {
   group('BeamingValueBuilder', () {
     test('builds a string-only value payload', () {
       final key = BeamingClientKeyBuilder().setKeyId('roots/oak').build();
-      final value = BeamingValueBuilder()
-          .setKey(key)
-          .setValue('acorn')
-          .build();
+      final value = BeamingValueBuilder().setKey(key).setValue('acorn').build();
 
       expect(value.key.keyId, 'roots/oak');
       expect(value.value, 'acorn');
@@ -49,7 +46,8 @@ void main() {
 
   test('event primitives stay immutable and typed', () {
     final rootKey = BeamingClientKeyBuilder().setKeyId('roots/oak').build();
-    final childKey = BeamingClientKeyBuilder().setKeyId('roots/oak/name').build();
+    final childKey =
+        BeamingClientKeyBuilder().setKeyId('roots/oak/name').build();
     final event = BeamingSetEvent(
       rootKey: rootKey,
       keyValue: BeamingValue(
