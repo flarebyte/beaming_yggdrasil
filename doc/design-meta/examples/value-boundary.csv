@@ -1,0 +1,4 @@
+topic,current_decision,future_position,rationale
+value-payload,only string values are supported for now,binary or file-reference payloads require a later explicit design pass,keep the transport contract simple while the package scope is still settling
+binary-content,no first-class binary payload support in this package today,defer until a concrete use case and transport shape are agreed,avoid accidental commitment to content-addressing upload or cache semantics
+content-metadata,do not add integrity hash size or content type fields to the core value contract yet,revisit only if non-string payloads become a real supported feature,metadata without a supported binary model adds ambiguity rather than clarity

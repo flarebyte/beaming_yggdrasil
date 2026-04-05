@@ -386,6 +386,14 @@ export type EventEnvelope = {
 | carry mock or auth-related values through the payload without interpreting them deeply | server controls forcing and validation behavior | secureKeyId |
 | limit client validation to nullability and obvious request-shape checks | avoid duplicating parsing logic that may move into another package | key-validation |
 
+#### Value Boundary
+
+| current_decision | future_position | rationale | topic |
+| --- | --- | --- | --- |
+| only string values are supported for now | binary or file-reference payloads require a later explicit design pass | keep the transport contract simple while the package scope is still settling | value-payload |
+| no first-class binary payload support in this package today | defer until a concrete use case and transport shape are agreed | avoid accidental commitment to content-addressing upload or cache semantics | binary-content |
+| do not add integrity hash size or content type fields to the core value contract yet | revisit only if non-string payloads become a real supported feature | metadata without a supported binary model adds ambiguity rather than clarity | content-metadata |
+
 ## 05 Diagnostics and Observability
 
 Hooks and signals for understanding transport behavior without locking the package into one tooling stack.

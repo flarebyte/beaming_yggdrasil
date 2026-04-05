@@ -67,7 +67,7 @@ reports: [{
 		sections: [{
 			title:       "01 Key Boundary"
 			description: "Why this package keeps key handling intentionally lightweight."
-			notes: ["dart.client.key-boundary", "dart.client.common"]
+			notes: ["dart.client.value-boundary", "dart.client.key-boundary", "dart.client.common"]
 		}]
 	}, {
 		title:       "05 Diagnostics and Observability"
@@ -167,6 +167,13 @@ notes: [
 		filepath: "examples/websocket-actions.csv"
 		arguments: ["format-csv=table"]
 		labels: ["websocket", "csv"]
+	},
+	{
+		name:  "dart.client.value-boundary"
+		title: "Value Boundary"
+		filepath: "examples/value-boundary.csv"
+		arguments: ["format-csv=table"]
+		labels: ["value", "boundary", "csv"]
 	},
 	{
 		name:  "dart.client.key-boundary"
