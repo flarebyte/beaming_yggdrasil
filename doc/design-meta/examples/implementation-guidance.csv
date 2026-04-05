@@ -1,5 +1,6 @@
 topic,recommendation,why_it_matters
 dart-api-style,follow Effective Dart design and style guidance for public library APIs,keeps the package idiomatic and easier for Dart users to adopt
+flutter-compatibility,keep the package Flutter-friendly as a pure Dart library that can be embedded into Flutter apps,lets Flutter consumers use the client without bringing Flutter framework types into the core API
 immutability,prefer immutable value objects and final fields for transport-facing DTOs,works well with stream pipelines retries and cache integration
 builder-pattern,use builders for assembling complex request or result objects when constructors would become noisy or error-prone,helps preserve immutable public objects while keeping object creation ergonomic
 naming,prefer Dart naming conventions and avoid Java-style getter prefixes,makes the library feel native in the Dart ecosystem

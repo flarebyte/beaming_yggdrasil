@@ -89,6 +89,16 @@ Major client areas, scope boundaries, and preferred API direction.
 | event envelopes with explicit operation kinds | cache adapters can apply incremental updates without inferring intent from raw payload differences |
 | transport and stream hooks | cache-specific retry backoff and persistence logic can live in another package without forking this client |
 
+#### Flutter Compatibility
+
+| recommendation | topic | why_it_matters |
+| --- | --- | --- |
+| keep the core client as a pure Dart package with no Flutter framework dependency | package-boundary | lets the library be reused from Flutter apps server tools and test harnesses without UI coupling |
+| design the client so it can be instantiated and used inside a Flutter app lifecycle | flutter-embedding | real consumers will often call it from view models controllers or state-management layers |
+| keep widgets BuildContext and Flutter rendering concerns out of the core API | ui-separation | preserves testability and avoids forcing one Flutter architecture on consumers |
+| use Future and Stream based surfaces that compose naturally with Flutter and Dart async code | async-model | works cleanly with Flutter state management and with the optional Rx adapter layer |
+| avoid core assumptions that require dart:io only runtime behavior unless explicitly isolated behind adapters | platform-safety | keeps more Flutter target options open including tests and non-mobile runtimes |
+
 #### Planned Surface
 
 | intent | surface_area |
@@ -578,6 +588,7 @@ Implementation should follow idiomatic Dart API design while preserving the pack
 | recommendation | topic | why_it_matters |
 | --- | --- | --- |
 | follow Effective Dart design and style guidance for public library APIs | dart-api-style | keeps the package idiomatic and easier for Dart users to adopt |
+| keep the package Flutter-friendly as a pure Dart library that can be embedded into Flutter apps | flutter-compatibility | lets Flutter consumers use the client without bringing Flutter framework types into the core API |
 | prefer immutable value objects and final fields for transport-facing DTOs | immutability | works well with stream pipelines retries and cache integration |
 | use builders for assembling complex request or result objects when constructors would become noisy or error-prone | builder-pattern | helps preserve immutable public objects while keeping object creation ergonomic |
 | prefer Dart naming conventions and avoid Java-style getter prefixes | naming | makes the library feel native in the Dart ecosystem |
@@ -593,6 +604,8 @@ Use the official Dart guidance as the baseline for public API shape and package 
 - Effective Dart: Design: https://dart.dev/effective-dart/design
 - Effective Dart: Style: https://dart.dev/effective-dart/style
 - Publishing packages: https://dart.dev/tools/pub/publishing
+
+This package should remain a pure Dart library that embeds cleanly inside Flutter applications. Flutter apps should be able to use the client from view models, controllers, and state-management layers without pulling Flutter framework concepts such as widgets or `BuildContext` into the core API.
 
 Within this library, prefer immutable public objects and repository-specific builder types where object construction is non-trivial. Dart does not require builders for simple value classes, but builders are a reasonable pattern here when they help keep transport-facing objects immutable while avoiding large fragile constructors.
 

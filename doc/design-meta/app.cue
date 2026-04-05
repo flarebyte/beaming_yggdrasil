@@ -38,6 +38,7 @@ reports: [{
 				"dart.client.planned-surface",
 				"dart.client.api-direction",
 				"dart.client.api-surfaces",
+				"dart.client.flutter-compatibility",
 				"dart.client.cache-integration-primitives",
 				"dart.client.simplified-dart-api",
 				"dart.client.stream-integration",
@@ -166,6 +167,13 @@ notes: [
 		filepath: "examples/api-surfaces.csv"
 		arguments: ["format-csv=table"]
 		labels: ["api", "surface", "csv"]
+	},
+	{
+		name:  "dart.client.flutter-compatibility"
+		title: "Flutter Compatibility"
+		filepath: "examples/flutter-compatibility.csv"
+		arguments: ["format-csv=table"]
+		labels: ["flutter", "compatibility", "csv"]
 	},
 	{
 		name:  "dart.client.cache-integration-primitives"
@@ -386,6 +394,8 @@ notes: [
 		- Effective Dart: Design: https://dart.dev/effective-dart/design
 		- Effective Dart: Style: https://dart.dev/effective-dart/style
 		- Publishing packages: https://dart.dev/tools/pub/publishing
+
+		This package should remain a pure Dart library that embeds cleanly inside Flutter applications. Flutter apps should be able to use the client from view models, controllers, and state-management layers without pulling Flutter framework concepts such as widgets or `BuildContext` into the core API.
 
 		Within this library, prefer immutable public objects and repository-specific builder types where object construction is non-trivial. Dart does not require builders for simple value classes, but builders are a reasonable pattern here when they help keep transport-facing objects immutable while avoiding large fragile constructors.
 
