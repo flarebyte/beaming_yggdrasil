@@ -38,6 +38,7 @@ reports: [{
 				"dart.client.planned-surface",
 				"dart.client.api-direction",
 				"dart.client.cache-integration-primitives",
+				"dart.client.simplified-dart-api",
 				"dart.client.stream-integration",
 				"dart.client.source-layout",
 				"dart.client.usecases",
@@ -156,6 +157,64 @@ notes: [
 		filepath: "examples/cache-integration.csv"
 		arguments: ["format-csv=table"]
 		labels: ["cache", "integration", "csv"]
+	},
+	{
+		name:  "dart.client.simplified-dart-api"
+		title: "Simplified Dart API Example"
+		markdown: """
+		A higher-level Dart surface can sit on top of the wire-level DTOs:
+
+		    class BeamingClientKey {
+		      final String keyId;
+		      final String? version;
+		      final String? localKeyId;
+		    }
+
+		    class BeamingValue {
+		      final BeamingClientKey key;
+		      final String? value;
+		    }
+
+		    class BeamingWriteResult {
+		      final BeamingClientKey key;
+		      final String status;
+		      final String? message;
+		    }
+
+		    sealed class BeamingEvent {
+		      const BeamingEvent();
+		    }
+
+		    class BeamingSetEvent extends BeamingEvent {
+		      final BeamingClientKey rootKey;
+		      final BeamingValue keyValue;
+		    }
+
+		    class BeamingSnapshotReplacedEvent extends BeamingEvent {
+		      final BeamingClientKey rootKey;
+		      final String snapshotVersion;
+		    }
+
+		    abstract class BeamingYggdrasilClient {
+		      Future<List<BeamingValue>> getSnapshot(String rootKeyId);
+		      Future<void> replaceSnapshot(String rootKeyId, List<BeamingValue> values);
+		      Future<List<BeamingValue>> getNode(String rootKeyId, List<String> keyIds);
+		      Future<List<BeamingWriteResult>> setNode(String rootKeyId, List<BeamingValue> values);
+		      Future<List<BeamingWriteResult>> createChildren(
+		        String rootKeyId,
+		        List<BeamingClientKey> provisionalKeys,
+		      );
+		      Stream<BeamingEvent> watch(List<String> rootKeyIds);
+		    }
+
+		Design guidance:
+
+		- keep this API as a convenience layer over the wire-level DTOs
+		- preserve access to underlying statuses and versions
+		- make cache synchronization easy, but leave cache ownership to another package
+		- keep values immutable and string-only for now
+		"""
+		labels: ["dart", "api", "example", "markdown"]
 	},
 	{
 		name:  "dart.client.api-direction"

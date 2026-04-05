@@ -103,6 +103,60 @@ Major client areas, scope boundaries, and preferred API direction.
 | test-support | support mock-server admin flows as optional APIs | production-only operations not present in chatty |
 | local-state | expose primitives that make cache synchronization possible in another library | shipping a full offline sync engine or key-value cache in this package |
 
+#### Simplified Dart API Example
+
+A higher-level Dart surface can sit on top of the wire-level DTOs:
+
+    class BeamingClientKey {
+      final String keyId;
+      final String? version;
+      final String? localKeyId;
+    }
+
+    class BeamingValue {
+      final BeamingClientKey key;
+      final String? value;
+    }
+
+    class BeamingWriteResult {
+      final BeamingClientKey key;
+      final String status;
+      final String? message;
+    }
+
+    sealed class BeamingEvent {
+      const BeamingEvent();
+    }
+
+    class BeamingSetEvent extends BeamingEvent {
+      final BeamingClientKey rootKey;
+      final BeamingValue keyValue;
+    }
+
+    class BeamingSnapshotReplacedEvent extends BeamingEvent {
+      final BeamingClientKey rootKey;
+      final String snapshotVersion;
+    }
+
+    abstract class BeamingYggdrasilClient {
+      Future<List<BeamingValue>> getSnapshot(String rootKeyId);
+      Future<void> replaceSnapshot(String rootKeyId, List<BeamingValue> values);
+      Future<List<BeamingValue>> getNode(String rootKeyId, List<String> keyIds);
+      Future<List<BeamingWriteResult>> setNode(String rootKeyId, List<BeamingValue> values);
+      Future<List<BeamingWriteResult>> createChildren(
+        String rootKeyId,
+        List<BeamingClientKey> provisionalKeys,
+      );
+      Stream<BeamingEvent> watch(List<String> rootKeyIds);
+    }
+
+Design guidance:
+
+- keep this API as a convenience layer over the wire-level DTOs
+- preserve access to underlying statuses and versions
+- make cache synchronization easy, but leave cache ownership to another package
+- keep values immutable and string-only for now
+
 #### Source Layout
 
 | path | role |
