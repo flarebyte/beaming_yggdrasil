@@ -1,0 +1,7 @@
+locator: lib/src/client/error.dart
+meta:
+  class_list:
+    - BeamingClientError
+  function_list: []
+  import_files_list: []
+  language: dart

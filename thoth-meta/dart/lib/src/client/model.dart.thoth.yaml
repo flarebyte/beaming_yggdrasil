@@ -10,5 +10,6 @@ meta:
     - BeamingWriteResult
   function_list:
     - BeamingEvent
-  import_files_list: []
+  import_files_list:
+    - error.dart
   language: dart

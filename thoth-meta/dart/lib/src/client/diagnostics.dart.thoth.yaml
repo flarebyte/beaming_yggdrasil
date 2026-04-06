@@ -1,0 +1,7 @@
+locator: lib/src/client/diagnostics.dart
+meta:
+  class_list:
+    - BeamingDiagnosticEvent
+  function_list: []
+  import_files_list: []
+  language: dart

@@ -1,0 +1,10 @@
+locator: lib/src/client/recovery.dart
+meta:
+  class_list:
+    - BeamingRecoveryAction
+    - BeamingRecoveryExecutor
+  function_list:
+    - _identityRecoveryEvent
+  import_files_list:
+    - diagnostics.dart
+  language: dart

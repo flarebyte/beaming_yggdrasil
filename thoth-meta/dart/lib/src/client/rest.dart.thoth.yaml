@@ -3,5 +3,6 @@ meta:
   class_list: []
   function_list: []
   import_files_list:
+    - error.dart
     - model.dart
   language: dart

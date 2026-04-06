@@ -171,7 +171,7 @@ void main() {
       ['ok', 'invalid'],
     );
 
-    await harness.requestJson(
+    final seeded = await harness.requestJson(
       'PUT',
       '/node',
       jsonBody: const <String, Object?>{
@@ -192,7 +192,18 @@ void main() {
         ],
       },
     );
-    final accepted = await harness.requestJson(
+    final seededEnvelope =
+        BeamingRestEnvelope.fromJson<BeamingSetKeyValueResponseData>(
+      jsonDecode(seeded.body) as Map<String, Object?>,
+      BeamingSetKeyValueResponseData.fromJson,
+    );
+
+    expect(seeded.statusCode, 200);
+    expect(seededEnvelope.status, 'ok');
+    expect(seededEnvelope.data.keyList.single.status, 'ok');
+    expect(seededEnvelope.data.keyList.single.key.version, 'v2');
+
+    final stale = await harness.requestJson(
       'PUT',
       '/node',
       jsonBody: const <String, Object?>{
@@ -209,29 +220,6 @@ void main() {
               'version': 'v1',
             },
             'value': 'after',
-          },
-        ],
-      },
-    );
-    expect(accepted.statusCode, 200);
-
-    final stale = await harness.requestJson(
-      'PUT',
-      '/node',
-      jsonBody: const <String, Object?>{
-        'id': 'req-set-node-e2e-004',
-        'rootKey': {
-          'keyId': _rootKeyId,
-          'secureKeyId': 'ok',
-        },
-        'keyValueList': [
-          {
-            'key': {
-              'keyId': '$_rootKeyId:note:n7c401c2:text',
-              'secureKeyId': 'ok',
-              'version': 'v1',
-            },
-            'value': 'stale',
           },
         ],
       },
@@ -327,6 +315,14 @@ void main() {
 
     final socket = await WebSocket.connect(harness.eventsUrl);
     addTearDown(socket.close);
+    final messages = socket
+        .cast<String>()
+        .map(
+          (raw) => BeamingServerMessage.fromJson(
+            jsonDecode(raw) as Map<String, Object?>,
+          ),
+        )
+        .asBroadcastStream();
 
     socket.add(
       jsonEncode(const <String, Object?>{
@@ -335,7 +331,7 @@ void main() {
         'rootKeys': [_rootKeyId],
       }),
     );
-    final subscribed = await _readServerMessage(socket);
+    final subscribed = await _readServerMessage(messages);
     expect(subscribed, isA<BeamingSubscribedMessage>());
     expect((subscribed as BeamingSubscribedMessage).rootKeys, [_rootKeyId]);
 
@@ -345,11 +341,11 @@ void main() {
         'kind': 'ping',
       }),
     );
-    final pong = await _readServerMessage(socket);
+    final pong = await _readServerMessage(messages);
     expect(pong, isA<BeamingPongMessage>());
     expect((pong as BeamingPongMessage).id, 'ping-e2e-001');
 
-    final nextEventFuture = _readServerMessage(socket);
+    final nextEventFuture = _readServerMessage(messages);
     await harness.requestJson(
       'PUT',
       '/node',
@@ -382,15 +378,14 @@ void main() {
         'rootKeys': ['not-allowed'],
       }),
     );
-    final invalid = await _readServerMessage(socket);
+    final invalid = await _readServerMessage(messages);
     expect(invalid, isA<BeamingStatusMessage>());
     expect((invalid as BeamingStatusMessage).status, 'invalid');
   }, timeout: const Timeout(Duration(seconds: 20)));
 }
 
-Future<BeamingServerMessage> _readServerMessage(WebSocket socket) async {
-  final raw = await socket.first.timeout(const Duration(seconds: 5));
-  return BeamingServerMessage.fromJson(
-    jsonDecode(raw as String) as Map<String, Object?>,
-  );
+Future<BeamingServerMessage> _readServerMessage(
+  Stream<BeamingServerMessage> messages,
+) {
+  return messages.first.timeout(const Duration(seconds: 5));
 }

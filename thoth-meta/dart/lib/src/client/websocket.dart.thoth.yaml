@@ -24,5 +24,6 @@ meta:
     - _valueToJson
   import_files_list:
     - dart:async
+    - error.dart
     - model.dart
   language: dart

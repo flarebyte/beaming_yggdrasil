@@ -84,7 +84,9 @@ class ChattyHarness {
       );
       request.headers.contentType = ContentType.json;
       if (jsonBody != null) {
-        request.write(jsonEncode(jsonBody));
+        final encodedBody = utf8.encode(jsonEncode(jsonBody));
+        request.contentLength = encodedBody.length;
+        request.add(encodedBody);
       }
       final response = await request.close();
       final body = await utf8.decodeStream(response);

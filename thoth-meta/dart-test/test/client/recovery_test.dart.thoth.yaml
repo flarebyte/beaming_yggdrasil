@@ -1,0 +1,10 @@
+locator: test/client/recovery_test.dart
+meta:
+  import_files_list:
+    - package:beaming_yggdrasil/beaming_yggdrasil.dart
+    - package:test/test.dart
+  language: dart
+  testcase_titles_list:
+    - recovery executor can skip actions through policy
+    - recovery executor proceeds explicitly and emits stable recovery events
+    - recovery executor reports failure without swallowing it

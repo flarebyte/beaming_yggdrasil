@@ -1,0 +1,10 @@
+locator: test/client/rx_client_test.dart
+meta:
+  import_files_list:
+    - package:beaming_yggdrasil/beaming_yggdrasil.dart
+    - package:test/test.dart
+  language: dart
+  testcase_titles_list:
+    - repeated rx watch subscriptions observe equivalent event payloads
+    - rx createChildren stream preserves the classic create results
+    - rx snapshot stream emits the same values as the classic client

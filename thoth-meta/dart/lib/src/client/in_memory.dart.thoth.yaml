@@ -7,11 +7,14 @@ meta:
     - _InMemoryTestingClient
     - _InMemoryWebSocketSession
   function_list:
+    - _identityDiagnostics
     - createBeamingInMemoryHarness
   import_files_list:
     - client.dart
     - dart:async
+    - diagnostics.dart
     - model.dart
+    - rx_client.dart
     - testing_client.dart
     - websocket.dart
   language: dart
