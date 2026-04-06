@@ -1,3 +1,4 @@
+import 'error.dart';
 import 'model.dart';
 
 part 'rest_common.dart';

@@ -1,3 +1,5 @@
+import 'error.dart';
+
 /// Immutable key reference used by the spec-aligned client surfaces.
 class BeamingClientKey {
   final String keyId;
@@ -42,7 +44,10 @@ class BeamingClientKeyBuilder {
 
   String _requireNonEmpty(String? value, String fieldName) {
     if (value == null || value.trim().isEmpty) {
-      throw StateError("Field '$fieldName' must not be empty.");
+      throw BeamingClientError(
+        kind: BeamingClientErrorKind.invalidRequest,
+        message: "Field '$fieldName' must not be empty.",
+      );
     }
     return value;
   }
@@ -81,7 +86,10 @@ class BeamingValueBuilder {
   }
 
   Never _missing(String fieldName) {
-    throw StateError("Missing required field: $fieldName");
+    throw BeamingClientError(
+      kind: BeamingClientErrorKind.invalidRequest,
+      message: 'Missing required field: $fieldName',
+    );
   }
 }
 

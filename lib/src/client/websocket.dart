@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'error.dart';
 import 'model.dart';
 
 /// Optional light WebSocket session boundary.
@@ -90,7 +91,10 @@ sealed class BeamingServerMessage {
       'pong' => BeamingPongMessage.fromJson(json),
       'status' => BeamingStatusMessage.fromJson(json),
       'event' => BeamingEventMessage.fromJson(json),
-      _ => throw FormatException("Unsupported server message kind '$kind'."),
+      _ => throw BeamingClientError(
+          kind: BeamingClientErrorKind.protocolViolation,
+          message: "Unsupported server message kind '$kind'.",
+        ),
     };
   }
 
@@ -265,7 +269,10 @@ class BeamingEventEnvelope {
           snapshotVersion:
               snapshotVersion ?? _missingEventValue('snapshotVersion'),
         ),
-      _ => throw FormatException("Unsupported event operation '$operation'."),
+      _ => throw BeamingClientError(
+          kind: BeamingClientErrorKind.protocolViolation,
+          message: "Unsupported event operation '$operation'.",
+        ),
     };
   }
 
@@ -346,7 +353,10 @@ Map<String, Object?> _readRequiredMap(Map<String, Object?> json, String key) {
   if (value is Map) {
     return value.cast<String, Object?>();
   }
-  throw FormatException("Expected '$key' to be an object.");
+  throw BeamingClientError(
+    kind: BeamingClientErrorKind.protocolViolation,
+    message: "Expected '$key' to be an object.",
+  );
 }
 
 String _readRequiredString(Map<String, Object?> json, String key) {
@@ -354,7 +364,10 @@ String _readRequiredString(Map<String, Object?> json, String key) {
   if (value is String && value.isNotEmpty) {
     return value;
   }
-  throw FormatException("Expected '$key' to be a non-empty string.");
+  throw BeamingClientError(
+    kind: BeamingClientErrorKind.protocolViolation,
+    message: "Expected '$key' to be a non-empty string.",
+  );
 }
 
 List<String> _readStringList(Map<String, Object?> json, String key) {
@@ -363,18 +376,27 @@ List<String> _readStringList(Map<String, Object?> json, String key) {
     return const <String>[];
   }
   if (value is! List) {
-    throw FormatException("Expected '$key' to be a list.");
+    throw BeamingClientError(
+      kind: BeamingClientErrorKind.protocolViolation,
+      message: "Expected '$key' to be a list.",
+    );
   }
   return List<String>.unmodifiable(
     value.map((item) {
       if (item is String) {
         return item;
       }
-      throw FormatException("Expected '$key' items to be strings.");
+      throw BeamingClientError(
+        kind: BeamingClientErrorKind.protocolViolation,
+        message: "Expected '$key' items to be strings.",
+      );
     }),
   );
 }
 
 Never _missingEventValue(String fieldName) {
-  throw FormatException("Missing required event field '$fieldName'.");
+  throw BeamingClientError(
+    kind: BeamingClientErrorKind.protocolViolation,
+    message: "Missing required event field '$fieldName'.",
+  );
 }

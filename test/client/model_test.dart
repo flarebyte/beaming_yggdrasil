@@ -18,11 +18,23 @@ void main() {
     test('rejects missing or blank keyId', () {
       expect(
         () => BeamingClientKeyBuilder().build(),
-        throwsA(isA<StateError>()),
+        throwsA(
+          isA<BeamingClientError>().having(
+            (error) => error.kind,
+            'kind',
+            BeamingClientErrorKind.invalidRequest,
+          ),
+        ),
       );
       expect(
         () => BeamingClientKeyBuilder().setKeyId('   ').build(),
-        throwsA(isA<StateError>()),
+        throwsA(
+          isA<BeamingClientError>().having(
+            (error) => error.kind,
+            'kind',
+            BeamingClientErrorKind.invalidRequest,
+          ),
+        ),
       );
     });
   });
@@ -39,7 +51,13 @@ void main() {
     test('requires a key', () {
       expect(
         () => BeamingValueBuilder().setValue('acorn').build(),
-        throwsA(isA<StateError>()),
+        throwsA(
+          isA<BeamingClientError>().having(
+            (error) => error.kind,
+            'kind',
+            BeamingClientErrorKind.invalidRequest,
+          ),
+        ),
       );
     });
   });

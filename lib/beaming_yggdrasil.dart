@@ -5,6 +5,7 @@ library;
 /// Keep Flutter framework concepts out of this package so application code can
 /// compose the client with its own widget tree and state-management approach.
 export 'src/client/client.dart';
+export 'src/client/error.dart';
 export 'src/client/in_memory.dart';
 export 'src/client/model.dart';
 export 'src/client/rest.dart';

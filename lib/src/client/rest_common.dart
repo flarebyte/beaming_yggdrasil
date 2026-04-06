@@ -125,7 +125,10 @@ Map<String, Object?> _readMap(Map<String, Object?> json, String key) {
   if (value is Map) {
     return value.cast<String, Object?>();
   }
-  throw FormatException("Expected '$key' to be an object.");
+  throw BeamingClientError(
+    kind: BeamingClientErrorKind.invalidResponse,
+    message: "Expected '$key' to be an object.",
+  );
 }
 
 List<T> _readList<T>(
@@ -135,7 +138,10 @@ List<T> _readList<T>(
 ) {
   final value = json[key];
   if (value is! List) {
-    throw FormatException("Expected '$key' to be a list.");
+    throw BeamingClientError(
+      kind: BeamingClientErrorKind.invalidResponse,
+      message: "Expected '$key' to be a list.",
+    );
   }
   return List<T>.unmodifiable(
     value.map((item) {
@@ -145,7 +151,10 @@ List<T> _readList<T>(
       if (item is Map) {
         return decodeItem(item.cast<String, Object?>());
       }
-      throw FormatException("Expected '$key' items to be objects.");
+      throw BeamingClientError(
+        kind: BeamingClientErrorKind.invalidResponse,
+        message: "Expected '$key' items to be objects.",
+      );
     }),
   );
 }
@@ -155,5 +164,8 @@ String _requireString(Map<String, Object?> json, String key) {
   if (value is String && value.isNotEmpty) {
     return value;
   }
-  throw FormatException("Expected '$key' to be a non-empty string.");
+  throw BeamingClientError(
+    kind: BeamingClientErrorKind.invalidResponse,
+    message: "Expected '$key' to be a non-empty string.",
+  );
 }
