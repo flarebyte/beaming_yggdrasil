@@ -22,7 +22,7 @@ PACKAGE_NAME := beaming_yggdrasil
 	format format-dart \
 	lint lint-dart analyze \
 	test test-dart test-unit test-e2e test-flutter test-coverage coverage-summary coverage-html \
-	review package-check \
+	review package-check publish-dry-run publish-check \
 	doc-gen doc-design-dir \
 	complexity dup \
 	thoth-meta thoth-meta-dart thoth-meta-dart-test thoth-lint-dart thoth-meta-merge view-thoth-meta-dart-test
@@ -89,6 +89,12 @@ test-flutter: ## Run Flutter tests when the package is used in Flutter contexts.
 	$(DART_ENV) flutter test
 
 package-check: review ## Backward-compatible alias for the main package gate.
+
+publish-dry-run: ## Run pub package validation without publishing.
+	@mkdir -p "$(DART_LOCAL_HOME)"
+	$(DART_ENV) dart pub publish --dry-run
+
+publish-check: review publish-dry-run ## Run the publish-oriented package quality gate.
 
 ## Documentation and metadata targets
 

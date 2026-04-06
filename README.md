@@ -1,6 +1,7 @@
 # beaming_yggdrasil
 
 ![Experimental](https://img.shields.io/badge/status-experimental-blue)
+![beaming_yggdrasil illustration](doc/beaming-yggdrasil.jpeg)
 
 Pure Dart client primitives for a Yggdrasil-style service, designed to embed
 cleanly inside Flutter applications.
@@ -119,6 +120,8 @@ Useful commands:
 - `make test-unit`
 - `make test-e2e`
 - `make package-check`
+- `make publish-dry-run`
+- `make publish-check`
 
 `make test-e2e` expects the sibling mock-server repo at `../chatty-ratatoskr`.
 
