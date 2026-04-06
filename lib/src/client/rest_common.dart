@@ -1,8 +1,15 @@
-// purpose: Hold the shared REST wire primitives and decoding helpers used by both request and response DTOs.
-// responsibilities: Encode and decode envelopes, keys, key-values, lists, and required scalar fields for REST models.
-// architecture notes: The helpers stay library-private so decoding rules remain consistent across DTOs without becoming part of the public API surface.
+/// purpose: Hold the shared REST wire primitives and decoding helpers used by
+/// both request and response DTOs.
+///
+/// responsibilities: Encode and decode envelopes, keys, key-values, lists, and
+/// required scalar fields for REST models.
+///
+/// architecture notes: The helpers stay library-private so decoding rules
+/// remain consistent across DTOs without becoming part of the public API
+/// surface.
 part of 'rest.dart';
 
+/// Generic REST envelope with status, message, and typed data payload.
 class BeamingRestEnvelope<T> {
   final String? id;
   final String? status;
@@ -16,6 +23,7 @@ class BeamingRestEnvelope<T> {
     this.message,
   });
 
+  /// Serializes the envelope while delegating the data payload encoding.
   Map<String, Object?> toJson(Object? Function(T value) encodeData) {
     return <String, Object?>{
       if (id != null) 'id': id,
@@ -25,6 +33,7 @@ class BeamingRestEnvelope<T> {
     };
   }
 
+  /// Decodes an envelope using the supplied typed payload decoder.
   static BeamingRestEnvelope<T> fromJson<T>(
     Map<String, Object?> json,
     T Function(Map<String, Object?> json) decodeData,
@@ -38,6 +47,7 @@ class BeamingRestEnvelope<T> {
   }
 }
 
+/// Wire-level key representation shared by REST requests and responses.
 class BeamingKeyParams {
   final String keyId;
   final String? version;
@@ -49,6 +59,7 @@ class BeamingKeyParams {
     this.localKeyId,
   });
 
+  /// Creates wire params from a public client key.
   factory BeamingKeyParams.fromClientKey(BeamingClientKey key) {
     return BeamingKeyParams(
       keyId: key.keyId,
@@ -57,6 +68,7 @@ class BeamingKeyParams {
     );
   }
 
+  /// Decodes wire params from JSON.
   factory BeamingKeyParams.fromJson(Map<String, Object?> json) {
     return BeamingKeyParams(
       keyId: _requireString(json, 'keyId'),
@@ -65,6 +77,7 @@ class BeamingKeyParams {
     );
   }
 
+  /// Converts wire params back into the public key type.
   BeamingClientKey toClientKey() {
     return BeamingClientKey(
       keyId: keyId,
@@ -73,6 +86,7 @@ class BeamingKeyParams {
     );
   }
 
+  /// Serializes the key params to the wire shape.
   Map<String, Object?> toJson() {
     return <String, Object?>{
       'keyId': keyId,
@@ -82,6 +96,7 @@ class BeamingKeyParams {
   }
 }
 
+/// Wire-level key and string value pair.
 class BeamingKeyValueParams {
   final BeamingKeyParams key;
   final String? value;
@@ -91,6 +106,7 @@ class BeamingKeyValueParams {
     this.value,
   });
 
+  /// Creates wire params from a public value object.
   factory BeamingKeyValueParams.fromValue(BeamingValue value) {
     return BeamingKeyValueParams(
       key: BeamingKeyParams.fromClientKey(value.key),
@@ -98,6 +114,7 @@ class BeamingKeyValueParams {
     );
   }
 
+  /// Decodes a key and value pair from JSON.
   factory BeamingKeyValueParams.fromJson(Map<String, Object?> json) {
     return BeamingKeyValueParams(
       key: BeamingKeyParams.fromJson(_readMap(json, 'key')),
@@ -105,6 +122,7 @@ class BeamingKeyValueParams {
     );
   }
 
+  /// Converts wire params back into the public value type.
   BeamingValue toValue() {
     return BeamingValue(
       key: key.toClientKey(),
@@ -112,6 +130,7 @@ class BeamingKeyValueParams {
     );
   }
 
+  /// Serializes the key and value pair to the wire shape.
   Map<String, Object?> toJson() {
     return <String, Object?>{
       'key': key.toJson(),

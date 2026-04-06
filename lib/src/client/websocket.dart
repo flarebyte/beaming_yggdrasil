@@ -1,6 +1,15 @@
-// purpose: Define the lightweight WebSocket protocol boundary so real-time session messages can be encoded and decoded without hard-wiring a socket implementation.
-// responsibilities: Describe client commands, server messages, event envelopes, and protocol validation helpers for the event channel.
-// architecture notes: This is intentionally a thin protocol layer, not a reconnecting transport stack, so higher-level recovery and policy stay outside this file.
+/// purpose: Define the lightweight WebSocket protocol boundary so real-time
+/// session messages can be encoded and decoded without hard-wiring a socket
+/// implementation.
+///
+/// responsibilities: Describe client commands, server messages, event
+/// envelopes, and protocol validation helpers for the event channel.
+///
+/// architecture notes: This is intentionally a thin protocol layer, not a
+/// reconnecting transport stack, so higher-level recovery and policy stay
+/// outside this file.
+library;
+
 import 'dart:async';
 
 import 'error.dart';
@@ -8,13 +17,17 @@ import 'model.dart';
 
 /// Optional light WebSocket session boundary.
 abstract class BeamingYggdrasilWebSocketSession {
+  /// Sends a typed client message over the session.
   Future<void> send(BeamingClientMessage message);
 
+  /// Returns the decoded server message stream for this session.
   Stream<BeamingServerMessage> messages();
 
+  /// Closes the session and releases any resources.
   Future<void> close();
 }
 
+/// Base type for typed client-to-server WebSocket messages.
 sealed class BeamingClientMessage {
   final String? id;
   final String kind;
@@ -24,9 +37,11 @@ sealed class BeamingClientMessage {
     this.id,
   });
 
+  /// Serializes the message to JSON.
   Map<String, Object?> toJson();
 }
 
+/// Subscribe command for one or more root keys.
 class BeamingSubscribeMessage extends BeamingClientMessage {
   final List<String> rootKeys;
 
@@ -35,6 +50,7 @@ class BeamingSubscribeMessage extends BeamingClientMessage {
     super.id,
   }) : super(kind: 'subscribe');
 
+  /// Serializes the message to JSON.
   @override
   Map<String, Object?> toJson() {
     return <String, Object?>{
@@ -45,6 +61,7 @@ class BeamingSubscribeMessage extends BeamingClientMessage {
   }
 }
 
+/// Unsubscribe command for one or more root keys.
 class BeamingUnsubscribeMessage extends BeamingClientMessage {
   final List<String> rootKeys;
 
@@ -53,6 +70,7 @@ class BeamingUnsubscribeMessage extends BeamingClientMessage {
     super.id,
   }) : super(kind: 'unsubscribe');
 
+  /// Serializes the message to JSON.
   @override
   Map<String, Object?> toJson() {
     return <String, Object?>{
@@ -63,11 +81,13 @@ class BeamingUnsubscribeMessage extends BeamingClientMessage {
   }
 }
 
+/// Ping command used to check session liveness.
 class BeamingPingMessage extends BeamingClientMessage {
   const BeamingPingMessage({
     super.id,
   }) : super(kind: 'ping');
 
+  /// Serializes the message to JSON.
   @override
   Map<String, Object?> toJson() {
     return <String, Object?>{
@@ -77,6 +97,7 @@ class BeamingPingMessage extends BeamingClientMessage {
   }
 }
 
+/// Base type for typed server-to-client WebSocket messages.
 sealed class BeamingServerMessage {
   final String? id;
   final String kind;
@@ -86,6 +107,7 @@ sealed class BeamingServerMessage {
     this.id,
   });
 
+  /// Decodes a typed server message from JSON.
   static BeamingServerMessage fromJson(Map<String, Object?> json) {
     final kind = _readRequiredString(json, 'kind');
     return switch (kind) {
@@ -101,9 +123,11 @@ sealed class BeamingServerMessage {
     };
   }
 
+  /// Serializes the message to JSON.
   Map<String, Object?> toJson();
 }
 
+/// Acknowledgement that the server accepted a subscription request.
 class BeamingSubscribedMessage extends BeamingServerMessage {
   final List<String> rootKeys;
 
@@ -112,6 +136,7 @@ class BeamingSubscribedMessage extends BeamingServerMessage {
     super.id,
   }) : super(kind: 'subscribed');
 
+  /// Decodes the message from JSON.
   factory BeamingSubscribedMessage.fromJson(Map<String, Object?> json) {
     return BeamingSubscribedMessage(
       id: json['id'] as String?,
@@ -119,6 +144,7 @@ class BeamingSubscribedMessage extends BeamingServerMessage {
     );
   }
 
+  /// Serializes the message to JSON.
   @override
   Map<String, Object?> toJson() {
     return <String, Object?>{
@@ -129,6 +155,7 @@ class BeamingSubscribedMessage extends BeamingServerMessage {
   }
 }
 
+/// Acknowledgement that the server updated the active subscription set.
 class BeamingUnsubscribedMessage extends BeamingServerMessage {
   final List<String> rootKeys;
 
@@ -137,6 +164,7 @@ class BeamingUnsubscribedMessage extends BeamingServerMessage {
     super.id,
   }) : super(kind: 'unsubscribed');
 
+  /// Decodes the message from JSON.
   factory BeamingUnsubscribedMessage.fromJson(Map<String, Object?> json) {
     return BeamingUnsubscribedMessage(
       id: json['id'] as String?,
@@ -144,6 +172,7 @@ class BeamingUnsubscribedMessage extends BeamingServerMessage {
     );
   }
 
+  /// Serializes the message to JSON.
   @override
   Map<String, Object?> toJson() {
     return <String, Object?>{
@@ -154,17 +183,20 @@ class BeamingUnsubscribedMessage extends BeamingServerMessage {
   }
 }
 
+/// Pong reply returned by the server.
 class BeamingPongMessage extends BeamingServerMessage {
   const BeamingPongMessage({
     super.id,
   }) : super(kind: 'pong');
 
+  /// Decodes the message from JSON.
   factory BeamingPongMessage.fromJson(Map<String, Object?> json) {
     return BeamingPongMessage(
       id: json['id'] as String?,
     );
   }
 
+  /// Serializes the message to JSON.
   @override
   Map<String, Object?> toJson() {
     return <String, Object?>{
@@ -174,6 +206,7 @@ class BeamingPongMessage extends BeamingServerMessage {
   }
 }
 
+/// Status message returned by the server for invalid or informational cases.
 class BeamingStatusMessage extends BeamingServerMessage {
   final String status;
   final String? message;
@@ -184,6 +217,7 @@ class BeamingStatusMessage extends BeamingServerMessage {
     super.id,
   }) : super(kind: 'status');
 
+  /// Decodes the message from JSON.
   factory BeamingStatusMessage.fromJson(Map<String, Object?> json) {
     return BeamingStatusMessage(
       id: json['id'] as String?,
@@ -192,6 +226,7 @@ class BeamingStatusMessage extends BeamingServerMessage {
     );
   }
 
+  /// Serializes the message to JSON.
   @override
   Map<String, Object?> toJson() {
     return <String, Object?>{
@@ -203,6 +238,7 @@ class BeamingStatusMessage extends BeamingServerMessage {
   }
 }
 
+/// Typed event payload transported over the WebSocket protocol.
 class BeamingEventEnvelope {
   final String eventId;
   final BeamingClientKey rootKey;
@@ -222,6 +258,7 @@ class BeamingEventEnvelope {
     this.snapshotVersion,
   });
 
+  /// Creates a wire event from a public event object.
   factory BeamingEventEnvelope.fromEvent(
     BeamingEvent event, {
     required String eventId,
@@ -247,6 +284,7 @@ class BeamingEventEnvelope {
     };
   }
 
+  /// Decodes the wire event from JSON.
   factory BeamingEventEnvelope.fromJson(Map<String, Object?> json) {
     final operation = _readRequiredString(json, 'operation');
     return BeamingEventEnvelope(
@@ -261,6 +299,7 @@ class BeamingEventEnvelope {
     );
   }
 
+  /// Converts the wire event back into the public event model.
   BeamingEvent toEvent() {
     return switch (operation) {
       'set' => BeamingSetEvent(
@@ -279,6 +318,7 @@ class BeamingEventEnvelope {
     };
   }
 
+  /// Serializes the event envelope to JSON.
   Map<String, Object?> toJson() {
     return <String, Object?>{
       'eventId': eventId,
@@ -292,6 +332,7 @@ class BeamingEventEnvelope {
   }
 }
 
+/// Server message carrying an event envelope.
 class BeamingEventMessage extends BeamingServerMessage {
   final BeamingEventEnvelope event;
 
@@ -299,6 +340,7 @@ class BeamingEventMessage extends BeamingServerMessage {
     required this.event,
   }) : super(kind: 'event');
 
+  /// Decodes the message from JSON.
   factory BeamingEventMessage.fromJson(Map<String, Object?> json) {
     return BeamingEventMessage(
       event: BeamingEventEnvelope.fromJson(
@@ -307,6 +349,7 @@ class BeamingEventMessage extends BeamingServerMessage {
     );
   }
 
+  /// Serializes the message to JSON.
   @override
   Map<String, Object?> toJson() {
     return <String, Object?>{

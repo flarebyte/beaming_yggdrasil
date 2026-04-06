@@ -1,6 +1,12 @@
-// purpose: Define the structured diagnostics hook contract so callers can observe library activity without committing the package to a logging framework.
-// responsibilities: Describe diagnostic event types, event payloads, and optional hook/redaction signatures.
-// architecture notes: Diagnostics are intentionally generic and side-effect free so observability can evolve outside the core client package.
+/// purpose: Define the structured diagnostics hook contract so callers can
+/// observe library activity without committing the package to a logging
+/// framework.
+///
+/// responsibilities: Describe diagnostic event types, event payloads, and
+/// optional hook and redaction signatures.
+///
+/// architecture notes: Diagnostics are intentionally generic and side-effect
+/// free so observability can evolve outside the core client package.
 /// Optional structured diagnostics hook.
 typedef BeamingDiagnosticsHook = void Function(BeamingDiagnosticEvent event);
 
@@ -9,6 +15,7 @@ typedef BeamingDiagnosticsRedactor = BeamingDiagnosticEvent Function(
   BeamingDiagnosticEvent event,
 );
 
+/// Kinds of diagnostic activity the package can emit.
 enum BeamingDiagnosticEventKind {
   request,
   session,
@@ -16,6 +23,7 @@ enum BeamingDiagnosticEventKind {
   recovery,
 }
 
+/// Structured diagnostics payload passed to hooks.
 class BeamingDiagnosticEvent {
   final BeamingDiagnosticEventKind kind;
   final String action;
@@ -27,6 +35,7 @@ class BeamingDiagnosticEvent {
     required this.details,
   });
 
+  /// Returns a copy with selected fields replaced.
   BeamingDiagnosticEvent copyWith({
     BeamingDiagnosticEventKind? kind,
     String? action,

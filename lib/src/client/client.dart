@@ -1,6 +1,14 @@
-// purpose: Define the main classic client contract so application code knows the supported high-level operations without depending on a transport implementation.
-// responsibilities: Declare snapshot, node, create, and watch APIs for the real client surface.
-// architecture notes: This file is interface-only on purpose so transport, retry, and cache decisions do not leak into the public API too early.
+/// purpose: Define the main classic client contract so application code knows
+/// the supported high-level operations without depending on a transport
+/// implementation.
+///
+/// responsibilities: Declare snapshot, node, create, and watch APIs for the
+/// real client surface.
+///
+/// architecture notes: This file is interface-only on purpose so transport,
+/// retry, and cache decisions do not leak into the public API too early.
+library;
+
 import 'model.dart';
 
 /// Primary public API.

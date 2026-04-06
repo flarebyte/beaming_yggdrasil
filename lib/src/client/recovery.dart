@@ -1,23 +1,36 @@
-// purpose: Make recovery policy an explicit higher-layer concern so retries and resubscriptions are coordinated by callers instead of hidden inside transport code.
-// responsibilities: Describe recovery actions and decisions, execute guarded recovery operations, and emit recovery diagnostics.
-// architecture notes: The executor intentionally asks policy first and then runs a supplied operation, which prevents implicit retry loops from becoming part of the transport contract.
+/// purpose: Make recovery policy an explicit higher-layer concern so retries
+/// and resubscriptions are coordinated by callers instead of hidden inside
+/// transport code.
+///
+/// responsibilities: Describe recovery actions and decisions, execute guarded
+/// recovery operations, and emit recovery diagnostics.
+///
+/// architecture notes: The executor intentionally asks policy first and then
+/// runs a supplied operation, which prevents implicit retry loops from becoming
+/// part of the transport contract.
+library;
+
 import 'diagnostics.dart';
 
+/// Supported recovery action categories.
 enum BeamingRecoveryActionKind {
   refreshSnapshot,
   resubscribe,
   reconnectSession,
 }
 
+/// Policy outcomes for a proposed recovery action.
 enum BeamingRecoveryDecision {
   proceed,
   skip,
 }
 
+/// Hook that decides whether a recovery action should run.
 typedef BeamingRecoveryPolicy = BeamingRecoveryDecision Function(
   BeamingRecoveryAction action,
 );
 
+/// Immutable description of a recovery action request.
 class BeamingRecoveryAction {
   final BeamingRecoveryActionKind kind;
   final List<String> rootKeyIds;
@@ -48,6 +61,7 @@ class BeamingRecoveryExecutor {
     BeamingDiagnosticsRedactor? diagnosticsRedactor,
   }) : _diagnosticsRedactor = diagnosticsRedactor ?? _identityRecoveryEvent;
 
+  /// Runs a recovery operation if the policy allows it and emits diagnostics.
   Future<T?> run<T>(
     BeamingRecoveryAction action,
     Future<T> Function() operation,

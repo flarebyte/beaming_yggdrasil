@@ -1,6 +1,16 @@
-// purpose: Provide an in-memory harness that exercises the public client contracts early without pretending to be the production HTTP or WebSocket implementation.
-// responsibilities: Seed snapshots, apply node writes, emit events, expose classic and Rx clients, and offer lightweight diagnostics-aware test scaffolding.
-// architecture notes: This file intentionally validates API shape and deterministic workflows rather than modeling real transport internals, so do not treat it as the production backend adapter.
+/// purpose: Provide an in-memory harness that exercises the public client
+/// contracts early without pretending to be the production HTTP or WebSocket
+/// implementation.
+///
+/// responsibilities: Seed snapshots, apply node writes, emit events, expose
+/// classic and Rx clients, and offer lightweight diagnostics-aware test
+/// scaffolding.
+///
+/// architecture notes: This file intentionally validates API shape and
+/// deterministic workflows rather than modeling real transport internals, so do
+/// not treat it as the production backend adapter.
+library;
+
 import 'dart:async';
 
 import 'client.dart';
@@ -53,9 +63,11 @@ class BeamingInMemoryHarness {
     );
   }
 
+  /// Closes the harness and releases its internal controllers.
   Future<void> close() => _state.close();
 }
 
+/// Creates a diagnostics-aware in-memory harness for examples and tests.
 BeamingInMemoryHarness createBeamingInMemoryHarness({
   BeamingDiagnosticsHook? diagnosticsHook,
   BeamingDiagnosticsRedactor? diagnosticsRedactor,

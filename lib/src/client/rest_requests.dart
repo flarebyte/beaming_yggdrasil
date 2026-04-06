@@ -1,8 +1,14 @@
-// purpose: Define the outbound REST request DTOs used to speak the server wire contract in a typed and deterministic way.
-// responsibilities: Represent snapshot, node, and create request payloads and convert them to and from JSON maps.
-// architecture notes: These types preserve request ordering and wire field names exactly so HTTP adapters do not need ad hoc map assembly logic.
+/// purpose: Define the outbound REST request DTOs used to speak the server wire
+/// contract in a typed and deterministic way.
+///
+/// responsibilities: Represent snapshot, node, and create request payloads and
+/// convert them to and from JSON maps.
+///
+/// architecture notes: These types preserve request ordering and wire field
+/// names exactly so HTTP adapters do not need ad hoc map assembly logic.
 part of 'rest.dart';
 
+/// Request body for test-only snapshot replacement.
 class BeamingSetSnapshotRequest {
   final String? id;
   final BeamingKeyParams key;
@@ -14,6 +20,7 @@ class BeamingSetSnapshotRequest {
     this.id,
   });
 
+  /// Decodes the request body from JSON.
   factory BeamingSetSnapshotRequest.fromJson(Map<String, Object?> json) {
     return BeamingSetSnapshotRequest(
       id: json['id'] as String?,
@@ -23,6 +30,7 @@ class BeamingSetSnapshotRequest {
     );
   }
 
+  /// Serializes the request body to JSON.
   Map<String, Object?> toJson() {
     return <String, Object?>{
       if (id != null) 'id': id,
@@ -32,6 +40,7 @@ class BeamingSetSnapshotRequest {
   }
 }
 
+/// Request body for reading a full snapshot.
 class BeamingGetSnapshotRequest {
   final String? id;
   final BeamingKeyParams key;
@@ -41,6 +50,7 @@ class BeamingGetSnapshotRequest {
     this.id,
   });
 
+  /// Decodes the request body from JSON.
   factory BeamingGetSnapshotRequest.fromJson(Map<String, Object?> json) {
     return BeamingGetSnapshotRequest(
       id: json['id'] as String?,
@@ -48,6 +58,7 @@ class BeamingGetSnapshotRequest {
     );
   }
 
+  /// Serializes the request body to JSON.
   Map<String, Object?> toJson() {
     return <String, Object?>{
       if (id != null) 'id': id,
@@ -56,6 +67,7 @@ class BeamingGetSnapshotRequest {
   }
 }
 
+/// Request body for writing one or more node values.
 class BeamingSetKeyValueRequest {
   final String? id;
   final BeamingKeyParams rootKey;
@@ -67,6 +79,7 @@ class BeamingSetKeyValueRequest {
     this.id,
   });
 
+  /// Decodes the request body from JSON.
   factory BeamingSetKeyValueRequest.fromJson(Map<String, Object?> json) {
     return BeamingSetKeyValueRequest(
       id: json['id'] as String?,
@@ -76,6 +89,7 @@ class BeamingSetKeyValueRequest {
     );
   }
 
+  /// Serializes the request body to JSON.
   Map<String, Object?> toJson() {
     return <String, Object?>{
       if (id != null) 'id': id,
@@ -85,6 +99,7 @@ class BeamingSetKeyValueRequest {
   }
 }
 
+/// Request body for reading selected node values.
 class BeamingGetKeyValueRequest {
   final String? id;
   final BeamingKeyParams rootKey;
@@ -96,6 +111,7 @@ class BeamingGetKeyValueRequest {
     this.id,
   });
 
+  /// Decodes the request body from JSON.
   factory BeamingGetKeyValueRequest.fromJson(Map<String, Object?> json) {
     return BeamingGetKeyValueRequest(
       id: json['id'] as String?,
@@ -104,6 +120,7 @@ class BeamingGetKeyValueRequest {
     );
   }
 
+  /// Serializes the request body to JSON.
   Map<String, Object?> toJson() {
     return <String, Object?>{
       if (id != null) 'id': id,
@@ -113,6 +130,7 @@ class BeamingGetKeyValueRequest {
   }
 }
 
+/// Child descriptor used during create requests.
 class BeamingNewKeyChildRequest {
   final String localKeyId;
   final String expectedKind;
@@ -122,6 +140,7 @@ class BeamingNewKeyChildRequest {
     required this.expectedKind,
   });
 
+  /// Decodes the child descriptor from JSON.
   factory BeamingNewKeyChildRequest.fromJson(Map<String, Object?> json) {
     return BeamingNewKeyChildRequest(
       localKeyId: _requireString(json, 'localKeyId'),
@@ -129,6 +148,7 @@ class BeamingNewKeyChildRequest {
     );
   }
 
+  /// Serializes the child descriptor to JSON.
   Map<String, Object?> toJson() {
     return <String, Object?>{
       'localKeyId': localKeyId,
@@ -137,6 +157,7 @@ class BeamingNewKeyChildRequest {
   }
 }
 
+/// Parent and child request descriptor used during create requests.
 class BeamingNewKeyRequest {
   final BeamingKeyParams key;
   final String expectedKind;
@@ -148,6 +169,7 @@ class BeamingNewKeyRequest {
     required this.children,
   });
 
+  /// Decodes the create request entry from JSON.
   factory BeamingNewKeyRequest.fromJson(Map<String, Object?> json) {
     return BeamingNewKeyRequest(
       key: BeamingKeyParams.fromJson(_readMap(json, 'key')),
@@ -156,6 +178,7 @@ class BeamingNewKeyRequest {
     );
   }
 
+  /// Serializes the create request entry to JSON.
   Map<String, Object?> toJson() {
     return <String, Object?>{
       'key': key.toJson(),
@@ -165,6 +188,7 @@ class BeamingNewKeyRequest {
   }
 }
 
+/// Request body for server-side child creation.
 class BeamingNewKeysRequest {
   final String? id;
   final BeamingKeyParams rootKey;
@@ -176,6 +200,7 @@ class BeamingNewKeysRequest {
     this.id,
   });
 
+  /// Decodes the request body from JSON.
   factory BeamingNewKeysRequest.fromJson(Map<String, Object?> json) {
     return BeamingNewKeysRequest(
       id: json['id'] as String?,
@@ -184,6 +209,7 @@ class BeamingNewKeysRequest {
     );
   }
 
+  /// Serializes the request body to JSON.
   Map<String, Object?> toJson() {
     return <String, Object?>{
       if (id != null) 'id': id,

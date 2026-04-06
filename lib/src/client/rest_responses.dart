@@ -1,8 +1,15 @@
-// purpose: Define the inbound REST response DTOs so server replies can be decoded into stable typed structures before reaching higher client layers.
-// responsibilities: Represent snapshot, node, create, and status-bearing response payloads and convert them to and from JSON maps.
-// architecture notes: Response DTOs preserve server statuses and messages instead of flattening them, because those wire semantics are part of the client contract.
+/// purpose: Define the inbound REST response DTOs so server replies can be
+/// decoded into stable typed structures before reaching higher client layers.
+///
+/// responsibilities: Represent snapshot, node, create, and status-bearing
+/// response payloads and convert them to and from JSON maps.
+///
+/// architecture notes: Response DTOs preserve server statuses and messages
+/// instead of flattening them, because those wire semantics are part of the
+/// client contract.
 part of 'rest.dart';
 
+/// Response data returned after test-only snapshot replacement.
 class BeamingSetSnapshotResponseData {
   final BeamingKeyParams key;
 
@@ -10,12 +17,14 @@ class BeamingSetSnapshotResponseData {
     required this.key,
   });
 
+  /// Decodes the response data from JSON.
   factory BeamingSetSnapshotResponseData.fromJson(Map<String, Object?> json) {
     return BeamingSetSnapshotResponseData(
       key: BeamingKeyParams.fromJson(_readMap(json, 'key')),
     );
   }
 
+  /// Serializes the response data to JSON.
   Map<String, Object?> toJson() {
     return <String, Object?>{
       'key': key.toJson(),
@@ -23,6 +32,7 @@ class BeamingSetSnapshotResponseData {
   }
 }
 
+/// Response data returned when reading a full snapshot.
 class BeamingGetSnapshotResponseData {
   final BeamingKeyParams key;
   final List<BeamingKeyValueParams> keyValueList;
@@ -32,6 +42,7 @@ class BeamingGetSnapshotResponseData {
     required this.keyValueList,
   });
 
+  /// Decodes the response data from JSON.
   factory BeamingGetSnapshotResponseData.fromJson(Map<String, Object?> json) {
     return BeamingGetSnapshotResponseData(
       key: BeamingKeyParams.fromJson(_readMap(json, 'key')),
@@ -40,6 +51,7 @@ class BeamingGetSnapshotResponseData {
     );
   }
 
+  /// Serializes the response data to JSON.
   Map<String, Object?> toJson() {
     return <String, Object?>{
       'key': key.toJson(),
@@ -48,6 +60,7 @@ class BeamingGetSnapshotResponseData {
   }
 }
 
+/// Shared base for response entries that carry a key, status, and message.
 abstract class _BeamingStatusKeyEntry {
   final BeamingKeyParams key;
   final String status;
@@ -59,6 +72,7 @@ abstract class _BeamingStatusKeyEntry {
     this.message,
   });
 
+  /// Serializes the status entry to JSON.
   Map<String, Object?> toJson() {
     return <String, Object?>{
       'key': key.toJson(),
@@ -68,6 +82,7 @@ abstract class _BeamingStatusKeyEntry {
   }
 }
 
+/// Status item returned by node write and similar responses.
 class BeamingStatusKeyItem extends _BeamingStatusKeyEntry {
   const BeamingStatusKeyItem({
     required super.key,
@@ -75,6 +90,7 @@ class BeamingStatusKeyItem extends _BeamingStatusKeyEntry {
     super.message,
   });
 
+  /// Decodes the status item from JSON.
   factory BeamingStatusKeyItem.fromJson(Map<String, Object?> json) {
     return BeamingStatusKeyItem(
       key: BeamingKeyParams.fromJson(_readMap(json, 'key')),
@@ -84,6 +100,7 @@ class BeamingStatusKeyItem extends _BeamingStatusKeyEntry {
   }
 }
 
+/// Status item returned by node read responses.
 class BeamingStatusKeyValueItem {
   final BeamingKeyValueParams keyValue;
   final String status;
@@ -95,6 +112,7 @@ class BeamingStatusKeyValueItem {
     this.message,
   });
 
+  /// Decodes the status item from JSON.
   factory BeamingStatusKeyValueItem.fromJson(Map<String, Object?> json) {
     return BeamingStatusKeyValueItem(
       keyValue: BeamingKeyValueParams.fromJson(_readMap(json, 'keyValue')),
@@ -103,6 +121,7 @@ class BeamingStatusKeyValueItem {
     );
   }
 
+  /// Serializes the status item to JSON.
   Map<String, Object?> toJson() {
     return <String, Object?>{
       'keyValue': keyValue.toJson(),
@@ -112,6 +131,7 @@ class BeamingStatusKeyValueItem {
   }
 }
 
+/// Response data returned after writing node values.
 class BeamingSetKeyValueResponseData {
   final BeamingKeyParams rootKey;
   final List<BeamingStatusKeyItem> keyList;
@@ -121,6 +141,7 @@ class BeamingSetKeyValueResponseData {
     required this.keyList,
   });
 
+  /// Decodes the response data from JSON.
   factory BeamingSetKeyValueResponseData.fromJson(Map<String, Object?> json) {
     return BeamingSetKeyValueResponseData(
       rootKey: BeamingKeyParams.fromJson(_readMap(json, 'rootKey')),
@@ -128,6 +149,7 @@ class BeamingSetKeyValueResponseData {
     );
   }
 
+  /// Serializes the response data to JSON.
   Map<String, Object?> toJson() {
     return <String, Object?>{
       'rootKey': rootKey.toJson(),
@@ -136,6 +158,7 @@ class BeamingSetKeyValueResponseData {
   }
 }
 
+/// Response data returned after reading selected node values.
 class BeamingGetKeyValueResponseData {
   final BeamingKeyParams rootKey;
   final List<BeamingStatusKeyValueItem> keyValueList;
@@ -145,6 +168,7 @@ class BeamingGetKeyValueResponseData {
     required this.keyValueList,
   });
 
+  /// Decodes the response data from JSON.
   factory BeamingGetKeyValueResponseData.fromJson(Map<String, Object?> json) {
     return BeamingGetKeyValueResponseData(
       rootKey: BeamingKeyParams.fromJson(_readMap(json, 'rootKey')),
@@ -153,6 +177,7 @@ class BeamingGetKeyValueResponseData {
     );
   }
 
+  /// Serializes the response data to JSON.
   Map<String, Object?> toJson() {
     return <String, Object?>{
       'rootKey': rootKey.toJson(),
@@ -161,6 +186,7 @@ class BeamingGetKeyValueResponseData {
   }
 }
 
+/// Child creation status entry returned by create responses.
 class BeamingNewKeyChildResponse extends _BeamingStatusKeyEntry {
   const BeamingNewKeyChildResponse({
     required super.key,
@@ -168,6 +194,7 @@ class BeamingNewKeyChildResponse extends _BeamingStatusKeyEntry {
     super.message,
   });
 
+  /// Decodes the child response from JSON.
   factory BeamingNewKeyChildResponse.fromJson(Map<String, Object?> json) {
     return BeamingNewKeyChildResponse(
       key: BeamingKeyParams.fromJson(_readMap(json, 'key')),
@@ -177,6 +204,7 @@ class BeamingNewKeyChildResponse extends _BeamingStatusKeyEntry {
   }
 }
 
+/// Parent creation status entry returned by create responses.
 class BeamingNewKeyResponse {
   final BeamingKeyParams key;
   final String status;
@@ -190,6 +218,7 @@ class BeamingNewKeyResponse {
     this.message,
   });
 
+  /// Decodes the create response entry from JSON.
   factory BeamingNewKeyResponse.fromJson(Map<String, Object?> json) {
     return BeamingNewKeyResponse(
       key: BeamingKeyParams.fromJson(_readMap(json, 'key')),
@@ -200,6 +229,7 @@ class BeamingNewKeyResponse {
     );
   }
 
+  /// Serializes the create response entry to JSON.
   Map<String, Object?> toJson() {
     return <String, Object?>{
       'key': key.toJson(),
@@ -210,6 +240,7 @@ class BeamingNewKeyResponse {
   }
 }
 
+/// Response data returned by server-side child creation.
 class BeamingNewKeysResponseData {
   final BeamingKeyParams rootKey;
   final List<BeamingNewKeyResponse> newKeys;
@@ -219,6 +250,7 @@ class BeamingNewKeysResponseData {
     required this.newKeys,
   });
 
+  /// Decodes the response data from JSON.
   factory BeamingNewKeysResponseData.fromJson(Map<String, Object?> json) {
     return BeamingNewKeysResponseData(
       rootKey: BeamingKeyParams.fromJson(_readMap(json, 'rootKey')),
@@ -226,6 +258,7 @@ class BeamingNewKeysResponseData {
     );
   }
 
+  /// Serializes the response data to JSON.
   Map<String, Object?> toJson() {
     return <String, Object?>{
       'rootKey': rootKey.toJson(),
