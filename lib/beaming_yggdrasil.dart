@@ -17,12 +17,9 @@ library;
 /// - [BeamingYggdrasilClient] for classic `Future` and `Stream` workflows
 /// - [BeamingYggdrasilRxClient] for optional Rx-style composition
 /// - [BeamingYggdrasilTestingClient] for test-only snapshot control
-/// - [createBeamingInMemoryHarness] for examples, acceptance tests, and early
-///   integration work
 export 'src/client/client.dart';
 export 'src/client/diagnostics.dart';
 export 'src/client/error.dart';
-export 'src/client/in_memory.dart';
 export 'src/client/model.dart';
 export 'src/client/recovery.dart';
 export 'src/client/rest.dart';

@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:beaming_yggdrasil/beaming_yggdrasil.dart';
 
+import '../support/in_memory_harness.dart';
+
 const _oakRootKeyId = 'roots/oak';
 const _oakSnapshotValues = <BeamingValue>[
   BeamingValue(

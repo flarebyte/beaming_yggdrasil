@@ -1,6 +1,5 @@
-/// purpose: Provide an in-memory harness that exercises the public client
-/// contracts early without pretending to be the production HTTP or WebSocket
-/// implementation.
+/// purpose: Provide a non-production in-memory harness that exercises the
+/// public client contracts for tests and examples.
 ///
 /// responsibilities: Seed snapshots, apply node writes, emit events, expose
 /// classic and Rx clients, and offer lightweight diagnostics-aware test
@@ -13,12 +12,7 @@ library;
 
 import 'dart:async';
 
-import 'client.dart';
-import 'diagnostics.dart';
-import 'model.dart';
-import 'rx_client.dart';
-import 'testing_client.dart';
-import 'websocket.dart';
+import 'package:beaming_yggdrasil/beaming_yggdrasil.dart';
 
 /// Small in-memory harness for early consumer workflow testing.
 ///

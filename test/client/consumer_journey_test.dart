@@ -1,6 +1,8 @@
 import 'package:beaming_yggdrasil/beaming_yggdrasil.dart';
 import 'package:test/test.dart';
 
+import '../../support/in_memory_harness.dart';
+
 void main() {
   test('loads a snapshot and starts watching updates', () async {
     final harness = createBeamingInMemoryHarness();

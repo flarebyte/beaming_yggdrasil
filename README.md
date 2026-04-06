@@ -8,10 +8,9 @@ Pure Dart client primitives for a Yggdrasil-style service, designed to embed
 cleanly inside Flutter applications.
 
 This package is currently best understood as a spec-aligned client foundation:
-it provides immutable models, typed wire DTOs, an optional Rx adapter, a
-testing-only snapshot control surface, and an in-memory harness for early
-consumer workflows. It does not yet ship production HTTP or WebSocket
-transport implementations.
+it provides immutable models, typed wire DTOs, an optional Rx adapter, and a
+testing-only snapshot control surface. It does not yet ship production HTTP or
+WebSocket transport implementations.
 
 The package currently provides:
 
@@ -20,7 +19,6 @@ The package currently provides:
 - an optional Rx-friendly adapter layered on top of the classic client
 - a separate testing client for snapshot seeding in tests
 - typed REST and light WebSocket DTOs
-- an in-memory harness for early workflow validation
 
 The package does not currently provide:
 
@@ -88,12 +86,15 @@ class TreeController {
 
 ## Local Example
 
-See `example/example.dart` for a complete in-memory example showing:
+See `example/example.dart` for a complete example showing:
 
 - snapshot bootstrap
 - watch subscription
 - create flow
 - the optional Rx adapter
+
+The example uses a local support harness outside `lib/`. That harness is not
+part of the published runtime API.
 
 ## Public API Overview
 
@@ -103,8 +104,6 @@ See `example/example.dart` for a complete in-memory example showing:
   Optional adapter for Rx-style composition over the classic client.
 - `BeamingYggdrasilTestingClient`
   Testing-only snapshot seeding surface.
-- `createBeamingInMemoryHarness()`
-  In-memory harness for acceptance tests, examples, and early integration work.
 - `BeamingRestEnvelope` and related DTOs
   Typed REST request and response models.
 - `BeamingServerMessage` and related DTOs

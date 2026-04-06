@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:beaming_yggdrasil/beaming_yggdrasil.dart';
 import 'package:test/test.dart';
 
+import '../../support/in_memory_harness.dart';
+
 void main() {
   test('diagnostics hook observes request session and error activity',
       () async {

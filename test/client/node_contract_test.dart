@@ -1,6 +1,8 @@
 import 'package:beaming_yggdrasil/beaming_yggdrasil.dart';
 import 'package:test/test.dart';
 
+import '../../support/in_memory_harness.dart';
+
 void main() {
   test('setNode preserves input order and returns status per item', () async {
     final harness = createBeamingInMemoryHarness();

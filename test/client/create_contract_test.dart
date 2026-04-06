@@ -1,6 +1,8 @@
 import 'package:beaming_yggdrasil/beaming_yggdrasil.dart';
 import 'package:test/test.dart';
 
+import '../../support/in_memory_harness.dart';
+
 void main() {
   test('createChildren preserves localKeyId and returns stable results',
       () async {

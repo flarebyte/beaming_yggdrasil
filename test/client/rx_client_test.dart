@@ -1,6 +1,8 @@
 import 'package:beaming_yggdrasil/beaming_yggdrasil.dart';
 import 'package:test/test.dart';
 
+import '../../support/in_memory_harness.dart';
+
 const _oakRootKeyId = 'roots/oak';
 
 List<BeamingValue> _oakSnapshotValues() {
