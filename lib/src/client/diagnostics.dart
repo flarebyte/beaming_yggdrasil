@@ -10,6 +10,7 @@ enum BeamingDiagnosticEventKind {
   request,
   session,
   error,
+  recovery,
 }
 
 class BeamingDiagnosticEvent {
