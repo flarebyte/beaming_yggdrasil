@@ -1,3 +1,6 @@
+// purpose: Define the testing-only client surface for snapshot control that real consumers must not rely on in production code.
+// responsibilities: Expose snapshot replacement for tests, fixtures, and mock-server setup.
+// architecture notes: Snapshot mutation lives here on purpose because the real client is meant to read server-created snapshots rather than author them.
 import 'model.dart';
 
 /// Mock-control and testing-only surface.

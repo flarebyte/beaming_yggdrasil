@@ -1,5 +1,6 @@
 locator: lib/src/client/model.dart
 meta:
+  architecture_notes: Values are string-only for now and builders are kept as the explicit construction escape hatch for non-trivial immutable objects.
   class_list:
     - BeamingClientKey
     - BeamingClientKeyBuilder
@@ -13,3 +14,5 @@ meta:
   import_files_list:
     - error.dart
   language: dart
+  purpose: Define the immutable core value, key, result, and event objects that every public client surface shares.
+  responsibilities: Represent client keys and values, build validated immutable objects, and carry write and event payloads.

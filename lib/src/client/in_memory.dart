@@ -1,3 +1,6 @@
+// purpose: Provide an in-memory harness that exercises the public client contracts early without pretending to be the production HTTP or WebSocket implementation.
+// responsibilities: Seed snapshots, apply node writes, emit events, expose classic and Rx clients, and offer lightweight diagnostics-aware test scaffolding.
+// architecture notes: This file intentionally validates API shape and deterministic workflows rather than modeling real transport internals, so do not treat it as the production backend adapter.
 import 'dart:async';
 
 import 'client.dart';

@@ -1,6 +1,9 @@
 locator: lib/beaming_yggdrasil.dart
 meta:
+  architecture_notes: This file stays thin on purpose so the public surface is explicit here while implementation details remain under lib/src.
   class_list: []
   function_list: []
   import_files_list: []
   language: dart
+  purpose: Expose the stable public library surface and route consumers to the package entrypoints they should import from Flutter-compatible Dart code.
+  responsibilities: Export the supported client-facing modules and define the package-level scope of the public API.

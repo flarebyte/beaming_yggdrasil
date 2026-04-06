@@ -1,5 +1,6 @@
 locator: lib/src/client/recovery.dart
 meta:
+  architecture_notes: The executor intentionally asks policy first and then runs a supplied operation, which prevents implicit retry loops from becoming part of the transport contract.
   class_list:
     - BeamingRecoveryAction
     - BeamingRecoveryExecutor
@@ -8,3 +9,5 @@ meta:
   import_files_list:
     - diagnostics.dart
   language: dart
+  purpose: Make recovery policy an explicit higher-layer concern so retries and resubscriptions are coordinated by callers instead of hidden inside transport code.
+  responsibilities: Describe recovery actions and decisions, execute guarded recovery operations, and emit recovery diagnostics.

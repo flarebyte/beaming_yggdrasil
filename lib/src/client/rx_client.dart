@@ -1,3 +1,6 @@
+// purpose: Provide the optional Rx-friendly adapter surface for consumers who want reactive composition without forcing Rx onto every package user.
+// responsibilities: Declare Rx-shaped client methods and adapt the classic client into Rx streams.
+// architecture notes: Rx remains a companion layer over the classic client so DTOs and semantics stay shared and the core API remains plain Dart first.
 import 'package:rxdart/rxdart.dart';
 
 import 'client.dart';

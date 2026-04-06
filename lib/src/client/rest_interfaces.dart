@@ -1,3 +1,6 @@
+// purpose: Declare the transport-facing REST client boundaries so adapters can implement the wire contract without changing the main client API.
+// responsibilities: Expose real-client REST methods and the separate testing-only snapshot seeding method.
+// architecture notes: The testing REST interface is split from the real one on purpose so mock-only snapshot mutation does not drift into production usage.
 part of 'rest.dart';
 
 /// Transport-facing REST client boundary.

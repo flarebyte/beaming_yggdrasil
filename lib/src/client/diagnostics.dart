@@ -1,3 +1,6 @@
+// purpose: Define the structured diagnostics hook contract so callers can observe library activity without committing the package to a logging framework.
+// responsibilities: Describe diagnostic event types, event payloads, and optional hook/redaction signatures.
+// architecture notes: Diagnostics are intentionally generic and side-effect free so observability can evolve outside the core client package.
 /// Optional structured diagnostics hook.
 typedef BeamingDiagnosticsHook = void Function(BeamingDiagnosticEvent event);
 

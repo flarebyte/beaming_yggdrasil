@@ -1,3 +1,6 @@
+// purpose: Expose the stable public library surface and route consumers to the package entrypoints they should import from Flutter-compatible Dart code.
+// responsibilities: Export the supported client-facing modules and define the package-level scope of the public API.
+// architecture notes: This file stays thin on purpose so the public surface is explicit here while implementation details remain under lib/src.
 library;
 
 /// Pure Dart client primitives intended to embed cleanly inside Flutter apps.

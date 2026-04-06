@@ -1,7 +1,10 @@
 locator: lib/src/client/error.dart
 meta:
+  architecture_notes: This replaces ad hoc exception types so callers and tests can reason about failures without transport-specific exception parsing.
   class_list:
     - BeamingClientError
   function_list: []
   import_files_list: []
   language: dart
+  purpose: Provide one small client-visible error model so validation and protocol failures are reported consistently across the package.
+  responsibilities: Enumerate error kinds and carry structured exception data for request, response, state, and protocol failures.

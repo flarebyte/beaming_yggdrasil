@@ -1,3 +1,6 @@
+// purpose: Define the outbound REST request DTOs used to speak the server wire contract in a typed and deterministic way.
+// responsibilities: Represent snapshot, node, and create request payloads and convert them to and from JSON maps.
+// architecture notes: These types preserve request ordering and wire field names exactly so HTTP adapters do not need ad hoc map assembly logic.
 part of 'rest.dart';
 
 class BeamingSetSnapshotRequest {

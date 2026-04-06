@@ -1,3 +1,6 @@
+// purpose: Define the lightweight WebSocket protocol boundary so real-time session messages can be encoded and decoded without hard-wiring a socket implementation.
+// responsibilities: Describe client commands, server messages, event envelopes, and protocol validation helpers for the event channel.
+// architecture notes: This is intentionally a thin protocol layer, not a reconnecting transport stack, so higher-level recovery and policy stay outside this file.
 import 'dart:async';
 
 import 'error.dart';

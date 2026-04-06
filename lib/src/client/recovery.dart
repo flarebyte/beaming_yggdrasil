@@ -1,3 +1,6 @@
+// purpose: Make recovery policy an explicit higher-layer concern so retries and resubscriptions are coordinated by callers instead of hidden inside transport code.
+// responsibilities: Describe recovery actions and decisions, execute guarded recovery operations, and emit recovery diagnostics.
+// architecture notes: The executor intentionally asks policy first and then runs a supplied operation, which prevents implicit retry loops from becoming part of the transport contract.
 import 'diagnostics.dart';
 
 enum BeamingRecoveryActionKind {

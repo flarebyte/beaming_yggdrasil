@@ -1,3 +1,6 @@
+// purpose: Define the inbound REST response DTOs so server replies can be decoded into stable typed structures before reaching higher client layers.
+// responsibilities: Represent snapshot, node, create, and status-bearing response payloads and convert them to and from JSON maps.
+// architecture notes: Response DTOs preserve server statuses and messages instead of flattening them, because those wire semantics are part of the client contract.
 part of 'rest.dart';
 
 class BeamingSetSnapshotResponseData {

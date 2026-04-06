@@ -1,3 +1,6 @@
+// purpose: Define the immutable core value, key, result, and event objects that every public client surface shares.
+// responsibilities: Represent client keys and values, build validated immutable objects, and carry write and event payloads.
+// architecture notes: Values are string-only for now and builders are kept as the explicit construction escape hatch for non-trivial immutable objects.
 import 'error.dart';
 
 /// Immutable key reference used by the spec-aligned client surfaces.

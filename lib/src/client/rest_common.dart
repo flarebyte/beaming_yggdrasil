@@ -1,3 +1,6 @@
+// purpose: Hold the shared REST wire primitives and decoding helpers used by both request and response DTOs.
+// responsibilities: Encode and decode envelopes, keys, key-values, lists, and required scalar fields for REST models.
+// architecture notes: The helpers stay library-private so decoding rules remain consistent across DTOs without becoming part of the public API surface.
 part of 'rest.dart';
 
 class BeamingRestEnvelope<T> {
