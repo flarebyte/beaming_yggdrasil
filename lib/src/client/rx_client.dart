@@ -8,23 +8,29 @@ import 'model.dart';
 /// Keep this as a companion API layered on top of the classic client rather
 /// than the only public entrypoint.
 abstract class BeamingYggdrasilRxClient {
+  /// Rx wrapper over [BeamingYggdrasilClient.getSnapshot].
   Stream<List<BeamingValue>> snapshot$(String rootKeyId);
 
+  /// Rx wrapper over [BeamingYggdrasilClient.getNode].
   Stream<List<BeamingValue>> node$(String rootKeyId, List<String> keyIds);
 
+  /// Rx wrapper over [BeamingYggdrasilClient.setNode].
   Stream<List<BeamingWriteResult>> setNode$(
     String rootKeyId,
     List<BeamingValue> values,
   );
 
+  /// Rx wrapper over [BeamingYggdrasilClient.createChildren].
   Stream<List<BeamingWriteResult>> createChildren$(
     String rootKeyId,
     List<BeamingClientKey> provisionalKeys,
   );
 
+  /// Rx wrapper over [BeamingYggdrasilClient.watch].
   Stream<BeamingEvent> watch$(List<String> rootKeyIds);
 }
 
+/// Default Rx adapter layered on top of a classic client.
 class BeamingClassicRxClient implements BeamingYggdrasilRxClient {
   final BeamingYggdrasilClient _client;
 

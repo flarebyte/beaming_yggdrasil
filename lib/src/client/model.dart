@@ -105,10 +105,12 @@ class BeamingWriteResult {
   });
 }
 
+/// Base type for immutable client-visible events.
 sealed class BeamingEvent {
   const BeamingEvent();
 }
 
+/// Event emitted when a single value changes under a subscribed root.
 class BeamingSetEvent extends BeamingEvent {
   final BeamingClientKey rootKey;
   final BeamingValue keyValue;
@@ -119,6 +121,7 @@ class BeamingSetEvent extends BeamingEvent {
   });
 }
 
+/// Event emitted when a snapshot has been replaced for a subscribed root.
 class BeamingSnapshotReplacedEvent extends BeamingEvent {
   final BeamingClientKey rootKey;
   final String snapshotVersion;

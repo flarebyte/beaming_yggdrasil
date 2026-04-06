@@ -5,6 +5,12 @@
 Pure Dart client primitives for a Yggdrasil-style service, designed to embed
 cleanly inside Flutter applications.
 
+This package is currently best understood as a spec-aligned client foundation:
+it provides immutable models, typed wire DTOs, an optional Rx adapter, a
+testing-only snapshot control surface, and an in-memory harness for early
+consumer workflows. It does not yet ship production HTTP or WebSocket
+transport implementations.
+
 The package currently provides:
 
 - immutable client-side key, value, result, and event models
@@ -20,6 +26,13 @@ The package does not currently provide:
 - a production WebSocket transport
 - an offline cache engine
 - Flutter widgets or `BuildContext` integrations
+
+## Package Scope
+
+- pure Dart library, intended to run inside Flutter apps
+- current value payload contract is string-only
+- recovery and diagnostics are explicit hooks, not hidden framework behavior
+- snapshot replacement is testing-only and not part of the real client API
 
 ## Flutter-Friendly Usage
 
@@ -80,6 +93,23 @@ See `example/example.dart` for a complete in-memory example showing:
 - create flow
 - the optional Rx adapter
 
+## Public API Overview
+
+- `BeamingYggdrasilClient`
+  Main consumer surface using `Future` and `Stream`.
+- `BeamingYggdrasilRxClient`
+  Optional adapter for Rx-style composition over the classic client.
+- `BeamingYggdrasilTestingClient`
+  Testing-only snapshot seeding surface.
+- `createBeamingInMemoryHarness()`
+  In-memory harness for acceptance tests, examples, and early integration work.
+- `BeamingRestEnvelope` and related DTOs
+  Typed REST request and response models.
+- `BeamingServerMessage` and related DTOs
+  Typed light WebSocket protocol models.
+- `BeamingRecoveryExecutor`
+  Explicit recovery-policy boundary for refresh and resubscribe flows.
+
 ## Development
 
 Useful commands:
@@ -87,7 +117,10 @@ Useful commands:
 - `make format-dart`
 - `make analyze`
 - `make test-unit`
+- `make test-e2e`
 - `make package-check`
+
+`make test-e2e` expects the sibling mock-server repo at `../chatty-ratatoskr`.
 
 ## License
 

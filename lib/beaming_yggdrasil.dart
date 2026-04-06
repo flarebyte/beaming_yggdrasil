@@ -4,6 +4,13 @@ library;
 ///
 /// Keep Flutter framework concepts out of this package so application code can
 /// compose the client with its own widget tree and state-management approach.
+///
+/// The main entrypoints are:
+/// - [BeamingYggdrasilClient] for classic `Future` and `Stream` workflows
+/// - [BeamingYggdrasilRxClient] for optional Rx-style composition
+/// - [BeamingYggdrasilTestingClient] for test-only snapshot control
+/// - [createBeamingInMemoryHarness] for examples, acceptance tests, and early
+///   integration work
 export 'src/client/client.dart';
 export 'src/client/diagnostics.dart';
 export 'src/client/error.dart';
