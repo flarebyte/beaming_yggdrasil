@@ -1,7 +1,7 @@
 # beaming_yggdrasil
 
 ![Experimental](https://img.shields.io/badge/status-experimental-blue)
-![beaming_yggdrasil illustration](doc/beaming-yggdrasil.jpeg)
+![beaming_yggdrasil illustration](https://raw.githubusercontent.com/flarebyte/beaming_yggdrasil/main/doc/beaming-yggdrasil.jpeg)
 
 Pure Dart client primitives for a Yggdrasil-style service, designed to embed
 cleanly inside Flutter applications.
