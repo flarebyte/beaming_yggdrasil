@@ -11,6 +11,8 @@ DART_LOCAL_HOME := $(CURDIR)/.dart-home
 PUB_CACHE_DIR ?= $(HOME)/.pub-cache
 DART_ENV := HOME="$(DART_LOCAL_HOME)" PUB_CACHE="$(PUB_CACHE_DIR)" DART_SUPPRESS_ANALYTICS=true
 DART_DIRS := lib test
+UNIT_TEST_DIR := test/client
+E2E_TEST_DIR := test/e2e
 COVERAGE_DIR := coverage
 COVERAGE_LCOV := $(COVERAGE_DIR)/lcov.info
 COVERAGE_HTML_DIR := $(COVERAGE_DIR)/html
@@ -19,7 +21,7 @@ PACKAGE_NAME := beaming_yggdrasil
 .PHONY: help check-tools install-tools-help \
 	format format-dart \
 	lint lint-dart analyze \
-	test test-dart test-unit test-flutter test-coverage coverage-summary coverage-html \
+	test test-dart test-unit test-e2e test-flutter test-coverage coverage-summary coverage-html \
 	review package-check \
 	doc-gen doc-design-dir \
 	complexity dup \
@@ -74,9 +76,13 @@ analyze: lint-dart ## Backward-compatible alias for Dart analysis.
 
 test-dart: ## Run Dart unit and package tests.
 	@mkdir -p "$(DART_LOCAL_HOME)"
-	$(DART_ENV) dart test
+	$(DART_ENV) dart test $(UNIT_TEST_DIR)
 
 test-unit: test-dart ## Backward-compatible alias for Dart tests.
+
+test-e2e: ## Run Dart E2E tests against the local ../chatty-ratatoskr mock server when available.
+	@mkdir -p "$(DART_LOCAL_HOME)"
+	CHATTY_REPO_DIR="../chatty-ratatoskr" $(DART_ENV) dart test $(E2E_TEST_DIR)
 
 test-flutter: ## Run Flutter tests when the package is used in Flutter contexts.
 	@mkdir -p "$(DART_LOCAL_HOME)"
