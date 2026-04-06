@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'client.dart';
 import 'model.dart';
+import 'rx_client.dart';
 import 'testing_client.dart';
 import 'websocket.dart';
 
@@ -12,6 +13,7 @@ import 'websocket.dart';
 /// committing to HTTP or WebSocket internals too early.
 class BeamingInMemoryHarness {
   final BeamingYggdrasilClient client;
+  final BeamingYggdrasilRxClient rxClient;
   final BeamingYggdrasilTestingClient testingClient;
   final BeamingYggdrasilWebSocketSession webSocketSession;
 
@@ -19,6 +21,7 @@ class BeamingInMemoryHarness {
 
   BeamingInMemoryHarness._(
     this.client,
+    this.rxClient,
     this.testingClient,
     this.webSocketSession,
     this._state,
@@ -26,8 +29,10 @@ class BeamingInMemoryHarness {
 
   factory BeamingInMemoryHarness() {
     final state = _InMemoryState();
+    final client = _InMemoryClient(state);
     return BeamingInMemoryHarness._(
-      _InMemoryClient(state),
+      client,
+      BeamingClassicRxClient(client),
       _InMemoryTestingClient(state),
       _InMemoryWebSocketSession(state),
       state,
