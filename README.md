@@ -1,140 +1,94 @@
-# beaming-yggdrasil
+# beaming_yggdrasil
 
 ![Experimental](https://img.shields.io/badge/status-experimental-blue)
 
-> Branching data tree for Dart where your data can branch out and thrive
+Pure Dart client primitives for a Yggdrasil-style service, designed to embed
+cleanly inside Flutter applications.
 
-todo
+The package currently provides:
 
-![Hero image for beaming-yggdrasil](doc/beaming-yggdrasil.jpeg)
+- immutable client-side key, value, result, and event models
+- a classic `Future` and `Stream` client surface
+- an optional Rx-friendly adapter layered on top of the classic client
+- a separate testing client for snapshot seeding in tests
+- typed REST and light WebSocket DTOs
+- an in-memory harness for early workflow validation
 
-Highlights:
+The package does not currently provide:
 
--   todo
+- a production HTTP implementation
+- a production WebSocket transport
+- an offline cache engine
+- Flutter widgets or `BuildContext` integrations
 
-A few examples:
+## Flutter-Friendly Usage
 
-Check if a required environment variable is present:
-
-```dart
-is_present(env:flag:green);
-```
-
-Validate that a numeric score exceeds a threshold:
-
-```dart
-number_greater_than(env:score, config:passing_score);
-```
-
-Compare string values for exact match:
+The core library stays pure Dart, so a Flutter app can wrap it in its own
+controller, view model, or state-management layer.
 
 ```dart
-string_equals(env:mode, config:expected_mode);
+import 'dart:async';
+
+import 'package:beaming_yggdrasil/beaming_yggdrasil.dart';
+
+class TreeController {
+  final BeamingYggdrasilClient client;
+
+  StreamSubscription<BeamingEvent>? _subscription;
+  List<BeamingValue> snapshot = const [];
+
+  TreeController(this.client);
+
+  Future<void> load(String rootKeyId) async {
+    snapshot = await client.getSnapshot(rootKeyId);
+  }
+
+  Future<void> startWatching(String rootKeyId) async {
+    await _subscription?.cancel();
+    _subscription = client.watch([rootKeyId]).listen((event) {
+      if (event is BeamingSetEvent) {
+        _applyValue(event.keyValue);
+      }
+    });
+  }
+
+  Future<void> dispose() async {
+    await _subscription?.cancel();
+  }
+
+  void _applyValue(BeamingValue nextValue) {
+    final current = snapshot.toList();
+    final index = current.indexWhere(
+      (value) => value.key.keyId == nextValue.key.keyId,
+    );
+    if (index == -1) {
+      current.add(nextValue);
+    } else {
+      current[index] = nextValue;
+    }
+    snapshot = List<BeamingValue>.unmodifiable(current);
+  }
+}
 ```
 
-Confirm that a timestamp is before a configured deadline:
+## Local Example
 
-```dart
-date_time_less_than(env:submission_time, config:deadline);
-```
+See `example/example.dart` for a complete in-memory example showing:
 
-Ensure a minimum number of items in a list:
+- snapshot bootstrap
+- watch subscription
+- create flow
+- the optional Rx adapter
 
-```dart
-list_size_greater_than_equals(env:cart_items, config:min_required);
-```
+## Development
 
-Check if a user's roles include all required permissions:
+Useful commands:
 
-```dart
-is_superset_of(env:user_roles, config:required_roles);
-```
+- `make format-dart`
+- `make analyze`
+- `make test-unit`
+- `make package-check`
 
-Instantiate function registry containing boolean functions like
-string\_equals:
+## License
 
-```dart
-final functionRegistry = BooleanRhapsodyFunctionRegistry();
-```
-
-Configure analyser options with allowed prefixes, functions, and a variable
-validator:
-
-```dart
-final options = RhapsodyAnalyserOptions(
-  prefixes: ['env', 'config'],
-  functions: rhapsodyFunctionNames,
-  variableValidator: (name) => RegExp(r'^[a-zA-Z][a-zA-Z0-9]*$').hasMatch(name),
-  functionRegistry: functionRegistry,
-);
-
-```
-
-Tokenise rule strings into a list of tokens:
-
-```dart
-final tokeniser = RhapsodyTokeniser();
-final tokens = tokeniser.parse('rule example = is_present(env:flag);');
-
-```
-
-Perform semantic analysis on parsed tokens:
-
-```dart
-final analyser = RhapsodySemanticAnalyser(options);
-final analysis = analyser.analyse(tokens);
-
-```
-
-Instantiate interpreter with analysed rule structure:
-
-```dart
-final interpreter = RhapsodyInterpreter(analysis);
-```
-
-Create evaluation context with variable bindings:
-
-```dart
-RhapsodyEvaluationContextBuilder builder =
- RhapsodyEvaluationContextBuilder(prefixes: ['env', 'config']);
- builder.setRefValue('env:state', 'green');
- builder.setRefValue('env:alert', 'panic');
- RhapsodyEvaluationContext context = builder.build();
-
-```
-
-Interpret rules against the provided evaluation context:
-
-```dart
-interpreter.interpret(context);
-```
-
-Print or inspect rule evaluation results:
-
-```dart
-print(context.ruleState.states);
-```
-
-## Documentation and links
-
--   [Code Maintenance :wrench:](MAINTENANCE.md)
--   [Code Of Conduct](CODE_OF_CONDUCT.md)
--   [Contributing :busts\_in\_silhouette: :construction:](CONTRIBUTING.md)
--   [Architectural Decision Records :memo:](DECISIONS.md)
--   [Contributors
-    :busts\_in\_silhouette:](https://github.com/flarebyte/beaming-yggdrasil/graphs/contributors)
--   [Dependencies](https://github.com/flarebyte/beaming-yggdrasil/network/dependencies)
--   [Glossary
-    :book:](https://github.com/flarebyte/overview/blob/main/GLOSSARY.md)
--   [Software engineering principles
-    :gem:](https://github.com/flarebyte/overview/blob/main/PRINCIPLES.md)
--   [Overview of Flarebyte.com ecosystem
-    :factory:](https://github.com/flarebyte/overview)
--   [Dart dependencies](DEPENDENCIES.md)
--   [Internal dependencies](INTERNAL-DEPENDENCIES.md)
--   [Usage](USAGE.md)
--   [Example](example/example.dart)
-
-## Related
-
--   [form\_validator](https://pub.dev/packages/form_validator)
+`beaming_yggdrasil` is available under the [LICENSE](LICENSE).
