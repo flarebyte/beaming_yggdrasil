@@ -1,0 +1,13 @@
+locator: lib/src/client/websocket_client_messages.dart
+meta:
+  architecture_notes: These message types stay small and explicit so command semantics are visible in the type system instead of hidden in raw maps.
+  class_list:
+    - BeamingPingMessage
+    - BeamingSubscribeMessage
+    - BeamingUnsubscribeMessage
+  function_list:
+    - BeamingClientMessage
+  import_files_list: []
+  language: dart
+  purpose: Define the outbound WebSocket commands sent by clients.
+  responsibilities: Represent subscribe, unsubscribe, and ping messages and serialize them to the wire format.

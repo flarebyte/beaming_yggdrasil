@@ -1,0 +1,10 @@
+locator: lib/src/client/websocket_session.dart
+meta:
+  architecture_notes: This remains interface-only so socket lifecycle, reconnect, and transport implementation details stay outside the protocol model.
+  class_list:
+    - BeamingYggdrasilWebSocketSession
+  function_list: []
+  import_files_list: []
+  language: dart
+  purpose: Define the transport-agnostic WebSocket session boundary used by the rest of the protocol types.
+  responsibilities: Expose typed send, receive, and close operations for a live session.

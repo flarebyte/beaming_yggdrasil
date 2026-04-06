@@ -1,32 +1,12 @@
 locator: lib/src/client/websocket.dart
 meta:
-  architecture_notes: This is intentionally a thin protocol layer, not a reconnecting transport stack, so higher-level recovery and policy stay outside this file.
-  class_list:
-    - BeamingEventEnvelope
-    - BeamingEventMessage
-    - BeamingPingMessage
-    - BeamingPongMessage
-    - BeamingStatusMessage
-    - BeamingSubscribeMessage
-    - BeamingSubscribedMessage
-    - BeamingUnsubscribeMessage
-    - BeamingUnsubscribedMessage
-    - BeamingYggdrasilWebSocketSession
-  function_list:
-    - BeamingClientMessage
-    - BeamingServerMessage
-    - _clientKeyToJson
-    - _missingEventValue
-    - _readClientKey
-    - _readRequiredMap
-    - _readRequiredString
-    - _readStringList
-    - _readValue
-    - _valueToJson
+  architecture_notes: This library stays intentionally thin and delegates the wire details to focused part files so higher-level recovery and policy stay outside the protocol layer.
+  class_list: []
+  function_list: []
   import_files_list:
     - dart:async
     - error.dart
     - model.dart
   language: dart
   purpose: Define the lightweight WebSocket protocol boundary so real-time session messages can be encoded and decoded without hard-wiring a socket implementation.
-  responsibilities: Describe client commands, server messages, event envelopes, and protocol validation helpers for the event channel.
+  responsibilities: Bind the session interface, client messages, server messages, event envelopes, and shared protocol helpers into one library.

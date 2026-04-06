@@ -1,0 +1,15 @@
+locator: lib/src/client/websocket_server_messages.dart
+meta:
+  architecture_notes: Server messages keep status and protocol details intact because those wire semantics are part of the client contract.
+  class_list:
+    - BeamingEventMessage
+    - BeamingPongMessage
+    - BeamingStatusMessage
+    - BeamingSubscribedMessage
+    - BeamingUnsubscribedMessage
+  function_list:
+    - BeamingServerMessage
+  import_files_list: []
+  language: dart
+  purpose: Define the inbound WebSocket messages emitted by the server.
+  responsibilities: Decode subscribed, unsubscribed, pong, status, and event messages and serialize them back to the wire shape when needed.
