@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'client.dart';
+import 'diagnostics.dart';
 import 'model.dart';
 import 'rx_client.dart';
 import 'testing_client.dart';
@@ -28,7 +29,17 @@ class BeamingInMemoryHarness {
   );
 
   factory BeamingInMemoryHarness() {
-    final state = _InMemoryState();
+    return BeamingInMemoryHarness.withDiagnostics();
+  }
+
+  factory BeamingInMemoryHarness.withDiagnostics({
+    BeamingDiagnosticsHook? diagnosticsHook,
+    BeamingDiagnosticsRedactor? diagnosticsRedactor,
+  }) {
+    final state = _InMemoryState(
+      diagnosticsHook: diagnosticsHook,
+      diagnosticsRedactor: diagnosticsRedactor,
+    );
     final client = _InMemoryClient(state);
     return BeamingInMemoryHarness._(
       client,
@@ -42,8 +53,14 @@ class BeamingInMemoryHarness {
   Future<void> close() => _state.close();
 }
 
-BeamingInMemoryHarness createBeamingInMemoryHarness() =>
-    BeamingInMemoryHarness();
+BeamingInMemoryHarness createBeamingInMemoryHarness({
+  BeamingDiagnosticsHook? diagnosticsHook,
+  BeamingDiagnosticsRedactor? diagnosticsRedactor,
+}) =>
+    BeamingInMemoryHarness.withDiagnostics(
+      diagnosticsHook: diagnosticsHook,
+      diagnosticsRedactor: diagnosticsRedactor,
+    );
 
 class _InMemoryClient implements BeamingYggdrasilClient {
   final _InMemoryState _state;
@@ -55,12 +72,26 @@ class _InMemoryClient implements BeamingYggdrasilClient {
     String rootKeyId,
     List<BeamingClientKey> provisionalKeys,
   ) async {
+    _state.emitRequest(
+      'createChildren',
+      <String, Object?>{
+        'rootKeyId': rootKeyId,
+        'count': provisionalKeys.length,
+      },
+    );
     return _state.createChildren(rootKeyId, provisionalKeys);
   }
 
   @override
   Future<List<BeamingValue>> getNode(
       String rootKeyId, List<String> keyIds) async {
+    _state.emitRequest(
+      'getNode',
+      <String, Object?>{
+        'rootKeyId': rootKeyId,
+        'keyIds': keyIds,
+      },
+    );
     final snapshot = _state.snapshotValues(rootKeyId);
     final byKeyId = {
       for (final value in snapshot) value.key.keyId: value,
@@ -72,6 +103,10 @@ class _InMemoryClient implements BeamingYggdrasilClient {
 
   @override
   Future<List<BeamingValue>> getSnapshot(String rootKeyId) async {
+    _state.emitRequest(
+      'getSnapshot',
+      <String, Object?>{'rootKeyId': rootKeyId},
+    );
     return _state.snapshotValues(rootKeyId);
   }
 
@@ -80,6 +115,13 @@ class _InMemoryClient implements BeamingYggdrasilClient {
     String rootKeyId,
     List<BeamingValue> values,
   ) async {
+    _state.emitRequest(
+      'setNode',
+      <String, Object?>{
+        'rootKeyId': rootKeyId,
+        'count': values.length,
+      },
+    );
     _state.applyNodeValues(rootKeyId, values);
     return List<BeamingWriteResult>.unmodifiable(
       values
@@ -95,6 +137,10 @@ class _InMemoryClient implements BeamingYggdrasilClient {
 
   @override
   Stream<BeamingEvent> watch(List<String> rootKeyIds) {
+    _state.emitSession(
+      'watch',
+      <String, Object?>{'rootKeyIds': rootKeyIds},
+    );
     final allowed = Set<String>.from(rootKeyIds);
     return _state.events.where((event) {
       return switch (event) {
@@ -116,6 +162,13 @@ class _InMemoryTestingClient implements BeamingYggdrasilTestingClient {
     String rootKeyId,
     List<BeamingValue> values,
   ) async {
+    _state.emitRequest(
+      'replaceSnapshot',
+      <String, Object?>{
+        'rootKeyId': rootKeyId,
+        'count': values.length,
+      },
+    );
     _state.replaceSnapshot(rootKeyId, values);
   }
 }
@@ -160,6 +213,13 @@ class _InMemoryWebSocketSession implements BeamingYggdrasilWebSocketSession {
   Future<void> send(BeamingClientMessage message) async {
     switch (message) {
       case BeamingSubscribeMessage(:final rootKeys, :final id):
+        _state.emitSession(
+          'subscribe',
+          <String, Object?>{
+            'id': id,
+            'rootKeys': rootKeys,
+          },
+        );
         _subscribedRootKeys.addAll(rootKeys);
         _messages.add(
           BeamingSubscribedMessage(
@@ -168,6 +228,13 @@ class _InMemoryWebSocketSession implements BeamingYggdrasilWebSocketSession {
           ),
         );
       case BeamingUnsubscribeMessage(:final rootKeys, :final id):
+        _state.emitSession(
+          'unsubscribe',
+          <String, Object?>{
+            'id': id,
+            'rootKeys': rootKeys,
+          },
+        );
         _subscribedRootKeys.removeAll(rootKeys);
         _messages.add(
           BeamingUnsubscribedMessage(
@@ -176,6 +243,10 @@ class _InMemoryWebSocketSession implements BeamingYggdrasilWebSocketSession {
           ),
         );
       case BeamingPingMessage(:final id):
+        _state.emitSession(
+          'ping',
+          <String, Object?>{'id': id},
+        );
         _messages.add(BeamingPongMessage(id: id));
     }
   }
@@ -186,17 +257,61 @@ class _InMemoryState {
       StreamController<BeamingEvent>.broadcast();
   final Map<String, List<BeamingValue>> _snapshots = {};
   final Map<String, int> _snapshotCounters = {};
+  final BeamingDiagnosticsHook? _diagnosticsHook;
+  final BeamingDiagnosticsRedactor _diagnosticsRedactor;
   int _eventCounter = 0;
 
+  _InMemoryState({
+    BeamingDiagnosticsHook? diagnosticsHook,
+    BeamingDiagnosticsRedactor? diagnosticsRedactor,
+  })  : _diagnosticsHook = diagnosticsHook,
+        _diagnosticsRedactor = diagnosticsRedactor ?? _identityDiagnostics;
+
   Stream<BeamingEvent> get events => _events.stream;
+
+  void emitError(String action, Object error) {
+    _emitDiagnostic(
+      BeamingDiagnosticEvent(
+        kind: BeamingDiagnosticEventKind.error,
+        action: action,
+        details: <String, Object?>{
+          'error': error.toString(),
+        },
+      ),
+    );
+  }
+
+  void emitRequest(String action, Map<String, Object?> details) {
+    _emitDiagnostic(
+      BeamingDiagnosticEvent(
+        kind: BeamingDiagnosticEventKind.request,
+        action: action,
+        details: details,
+      ),
+    );
+  }
+
+  void emitSession(String action, Map<String, Object?> details) {
+    _emitDiagnostic(
+      BeamingDiagnosticEvent(
+        kind: BeamingDiagnosticEventKind.session,
+        action: action,
+        details: details,
+      ),
+    );
+  }
 
   Future<List<BeamingWriteResult>> createChildren(
     String rootKeyId,
     List<BeamingClientKey> provisionalKeys,
   ) async {
-    return List<BeamingWriteResult>.unmodifiable(
+    final results = List<BeamingWriteResult>.unmodifiable(
       provisionalKeys.map((key) => _createChild(rootKeyId, key)).toList(),
     );
+    if (results.any((result) => result.status != 'ok')) {
+      emitError('createChildren', 'partial failure');
+    }
+    return results;
   }
 
   void applyNodeValues(String rootKeyId, List<BeamingValue> values) {
@@ -273,6 +388,18 @@ class _InMemoryState {
     return keyId.startsWith('$rootKeyId/');
   }
 
+  void _emitDiagnostic(BeamingDiagnosticEvent event) {
+    final hook = _diagnosticsHook;
+    if (hook == null) {
+      return;
+    }
+    try {
+      hook(_diagnosticsRedactor(event));
+    } catch (_) {
+      // Diagnostics must not break core client behavior.
+    }
+  }
+
   String nextCreatedMarker() {
     return 'created-$_eventCounter';
   }
@@ -282,3 +409,6 @@ class _InMemoryState {
     return 'event-$_eventCounter';
   }
 }
+
+BeamingDiagnosticEvent _identityDiagnostics(BeamingDiagnosticEvent event) =>
+    event;
