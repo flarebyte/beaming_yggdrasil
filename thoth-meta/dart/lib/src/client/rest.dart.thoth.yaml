@@ -1,0 +1,7 @@
+locator: lib/src/client/rest.dart
+meta:
+  class_list: []
+  function_list: []
+  import_files_list:
+    - model.dart
+  language: dart

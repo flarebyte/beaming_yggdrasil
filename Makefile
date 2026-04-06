@@ -1,4 +1,7 @@
 FLYB := flyb
+THOTH ?= thoth
+YQ ?= yq
+JQ ?= jq
 
 DOC_DESIGN_DIR := doc/design
 DOC_META_DIR := doc/design-meta
@@ -9,7 +12,8 @@ COVERAGE_LCOV := $(COVERAGE_DIR)/lcov.info
 COVERAGE_HTML_DIR := $(COVERAGE_DIR)/html
 PACKAGE_NAME := beaming_yggdrasil
 
-.PHONY: doc-gen doc-design-dir analyze package-check test-unit test-flutter test-coverage coverage-summary coverage-html format-dart
+.PHONY: doc-gen doc-design-dir analyze package-check test-unit test-flutter test-coverage coverage-summary coverage-html format-dart \
+	complexity dup thoth-meta thoth-meta-dart thoth-meta-dart-test thoth-lint-dart thoth-meta-merge view-thoth-meta-dart-test
 
 analyze:
 	@mkdir -p "$(DART_LOCAL_HOME)"
@@ -57,3 +61,22 @@ complexity:
 
 dup:
 	npx jscpd --format dart --min-lines 10 --gitignore .
+
+thoth-meta: thoth-meta-dart thoth-meta-dart-test
+	$(THOTH) run --config ./pipeline-thoth-meta-aggregate.thoth.cue
+
+thoth-meta-dart:
+	$(THOTH) run --config ./pipeline-dart-maat.thoth.cue
+
+thoth-meta-dart-test:
+	$(THOTH) run --config ./pipeline-dart-test-maat.thoth.cue
+
+view-thoth-meta-dart-test:
+	find thoth-meta/dart-test/test -name '*.thoth.yaml' -exec $(YQ) '.meta.testcase_titles_list' {} \;
+
+thoth-lint-dart:
+	$(THOTH) run --config ./pipeline-dart-function-thresholds.thoth.cue
+	$(JQ) '.meta.reduced.worstOffenders' temp/pipeline-dart-function-thresholds.json
+
+thoth-meta-merge:
+	$(THOTH) run --config ./pipeline-thoth-meta-aggregate.thoth.cue

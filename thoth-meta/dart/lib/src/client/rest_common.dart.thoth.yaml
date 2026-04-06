@@ -1,0 +1,11 @@
+locator: lib/src/client/rest_common.dart
+meta:
+  class_list:
+    - BeamingKeyParams
+    - BeamingKeyValueParams
+    - BeamingRestEnvelope
+  function_list:
+    - _readMap
+    - _requireString
+  import_files_list: []
+  language: dart

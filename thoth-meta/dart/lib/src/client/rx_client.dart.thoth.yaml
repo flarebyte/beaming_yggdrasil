@@ -1,0 +1,8 @@
+locator: lib/src/client/rx_client.dart
+meta:
+  class_list:
+    - BeamingYggdrasilRxClient
+  function_list: []
+  import_files_list:
+    - model.dart
+  language: dart

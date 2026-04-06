@@ -1,0 +1,13 @@
+locator: lib/src/client/rest_requests.dart
+meta:
+  class_list:
+    - BeamingGetKeyValueRequest
+    - BeamingGetSnapshotRequest
+    - BeamingNewKeyChildRequest
+    - BeamingNewKeyRequest
+    - BeamingNewKeysRequest
+    - BeamingSetKeyValueRequest
+    - BeamingSetSnapshotRequest
+  function_list: []
+  import_files_list: []
+  language: dart

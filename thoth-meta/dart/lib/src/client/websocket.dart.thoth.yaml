@@ -1,0 +1,28 @@
+locator: lib/src/client/websocket.dart
+meta:
+  class_list:
+    - BeamingEventEnvelope
+    - BeamingEventMessage
+    - BeamingPingMessage
+    - BeamingPongMessage
+    - BeamingStatusMessage
+    - BeamingSubscribeMessage
+    - BeamingSubscribedMessage
+    - BeamingUnsubscribeMessage
+    - BeamingUnsubscribedMessage
+    - BeamingYggdrasilWebSocketSession
+  function_list:
+    - BeamingClientMessage
+    - BeamingServerMessage
+    - _clientKeyToJson
+    - _missingEventValue
+    - _readClientKey
+    - _readRequiredMap
+    - _readRequiredString
+    - _readStringList
+    - _readValue
+    - _valueToJson
+  import_files_list:
+    - dart:async
+    - model.dart
+  language: dart

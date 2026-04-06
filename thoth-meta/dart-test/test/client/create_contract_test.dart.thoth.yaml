@@ -1,0 +1,9 @@
+locator: test/client/create_contract_test.dart
+meta:
+  import_files_list:
+    - package:beaming_yggdrasil/beaming_yggdrasil.dart
+    - package:test/test.dart
+  language: dart
+  testcase_titles_list:
+    - createChildren keeps partial failures observable
+    - createChildren preserves localKeyId and returns stable results

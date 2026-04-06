@@ -1,0 +1,14 @@
+locator: test/client/model_test.dart
+meta:
+  import_files_list:
+    - package:beaming_yggdrasil/beaming_yggdrasil.dart
+    - package:test/test.dart
+  language: dart
+  testcase_titles_list:
+    - BeamingClientKeyBuilder
+    - BeamingValueBuilder
+    - builds a string-only value payload
+    - builds an immutable key with required keyId
+    - event primitives stay immutable and typed
+    - rejects missing or blank keyId
+    - requires a key

@@ -1,0 +1,8 @@
+locator: lib/src/client/testing_client.dart
+meta:
+  class_list:
+    - BeamingYggdrasilTestingClient
+  function_list: []
+  import_files_list:
+    - model.dart
+  language: dart

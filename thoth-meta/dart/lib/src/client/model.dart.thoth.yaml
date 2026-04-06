@@ -1,0 +1,14 @@
+locator: lib/src/client/model.dart
+meta:
+  class_list:
+    - BeamingClientKey
+    - BeamingClientKeyBuilder
+    - BeamingSetEvent
+    - BeamingSnapshotReplacedEvent
+    - BeamingValue
+    - BeamingValueBuilder
+    - BeamingWriteResult
+  function_list:
+    - BeamingEvent
+  import_files_list: []
+  language: dart

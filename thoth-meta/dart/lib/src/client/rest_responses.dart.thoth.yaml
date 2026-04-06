@@ -1,0 +1,16 @@
+locator: lib/src/client/rest_responses.dart
+meta:
+  class_list:
+    - BeamingGetKeyValueResponseData
+    - BeamingGetSnapshotResponseData
+    - BeamingNewKeyChildResponse
+    - BeamingNewKeyResponse
+    - BeamingNewKeysResponseData
+    - BeamingSetKeyValueResponseData
+    - BeamingSetSnapshotResponseData
+    - BeamingStatusKeyItem
+    - BeamingStatusKeyValueItem
+    - _BeamingStatusKeyEntry
+  function_list: []
+  import_files_list: []
+  language: dart

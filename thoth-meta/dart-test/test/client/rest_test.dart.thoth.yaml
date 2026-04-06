@@ -1,0 +1,13 @@
+locator: test/client/rest_test.dart
+meta:
+  import_files_list:
+    - package:beaming_yggdrasil/beaming_yggdrasil.dart
+    - package:test/test.dart
+  language: dart
+  testcase_titles_list:
+    - decode getNode envelope while preserving item order and statuses
+    - preserve create request child order and localKeyId values
+    - REST request DTOs
+    - REST response DTOs
+    - round-trip snapshot response data with immutable item ordering
+    - serialize getSnapshot with wire-aligned field names

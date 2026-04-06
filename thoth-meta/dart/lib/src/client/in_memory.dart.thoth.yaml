@@ -1,0 +1,17 @@
+locator: lib/src/client/in_memory.dart
+meta:
+  class_list:
+    - BeamingInMemoryHarness
+    - _InMemoryClient
+    - _InMemoryState
+    - _InMemoryTestingClient
+    - _InMemoryWebSocketSession
+  function_list:
+    - createBeamingInMemoryHarness
+  import_files_list:
+    - client.dart
+    - dart:async
+    - model.dart
+    - testing_client.dart
+    - websocket.dart
+  language: dart
