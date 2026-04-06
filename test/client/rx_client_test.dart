@@ -1,6 +1,21 @@
 import 'package:beaming_yggdrasil/beaming_yggdrasil.dart';
 import 'package:test/test.dart';
 
+const _oakRootKeyId = 'roots/oak';
+
+List<BeamingValue> _oakSnapshotValues() {
+  return const [
+    BeamingValue(
+      key: BeamingClientKey(keyId: 'roots/oak/title', version: 'v-1'),
+      value: 'oak',
+    ),
+    BeamingValue(
+      key: BeamingClientKey(keyId: 'roots/oak/status', version: 'v-1'),
+      value: 'healthy',
+    ),
+  ];
+}
+
 void main() {
   test('rx snapshot stream emits the same values as the classic client',
       () async {
@@ -8,21 +23,12 @@ void main() {
     addTearDown(harness.close);
 
     await harness.testingClient.replaceSnapshot(
-      'roots/oak',
-      [
-        const BeamingValue(
-          key: BeamingClientKey(keyId: 'roots/oak/title', version: 'v-1'),
-          value: 'oak',
-        ),
-        const BeamingValue(
-          key: BeamingClientKey(keyId: 'roots/oak/status', version: 'v-1'),
-          value: 'healthy',
-        ),
-      ],
+      _oakRootKeyId,
+      _oakSnapshotValues(),
     );
 
-    final classic = await harness.client.getSnapshot('roots/oak');
-    final rx = await harness.rxClient.snapshot$('roots/oak').first;
+    final classic = await harness.client.getSnapshot(_oakRootKeyId);
+    final rx = await harness.rxClient.snapshot$(_oakRootKeyId).first;
 
     expect(
       rx.map((value) => value.key.keyId).toList(),
@@ -72,11 +78,11 @@ void main() {
     final harness = createBeamingInMemoryHarness();
     addTearDown(harness.close);
 
-    final firstEventFuture = harness.rxClient.watch$(['roots/oak']).first;
-    final secondEventFuture = harness.rxClient.watch$(['roots/oak']).first;
+    final firstEventFuture = harness.rxClient.watch$([_oakRootKeyId]).first;
+    final secondEventFuture = harness.rxClient.watch$([_oakRootKeyId]).first;
 
     await harness.testingClient.replaceSnapshot(
-      'roots/oak',
+      _oakRootKeyId,
       [
         const BeamingValue(
           key: BeamingClientKey(keyId: 'roots/oak/title', version: 'v-2'),

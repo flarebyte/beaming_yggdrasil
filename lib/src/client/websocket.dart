@@ -53,11 +53,7 @@ class BeamingSubscribeMessage extends BeamingClientMessage {
   /// Serializes the message to JSON.
   @override
   Map<String, Object?> toJson() {
-    return <String, Object?>{
-      if (id != null) 'id': id,
-      'kind': kind,
-      'rootKeys': rootKeys,
-    };
+    return _serverMessageWithRootKeys(id, kind, rootKeys);
   }
 }
 
@@ -73,11 +69,7 @@ class BeamingUnsubscribeMessage extends BeamingClientMessage {
   /// Serializes the message to JSON.
   @override
   Map<String, Object?> toJson() {
-    return <String, Object?>{
-      if (id != null) 'id': id,
-      'kind': kind,
-      'rootKeys': rootKeys,
-    };
+    return _serverMessageWithRootKeys(id, kind, rootKeys);
   }
 }
 
@@ -138,20 +130,17 @@ class BeamingSubscribedMessage extends BeamingServerMessage {
 
   /// Decodes the message from JSON.
   factory BeamingSubscribedMessage.fromJson(Map<String, Object?> json) {
+    final message = _readRootKeysMessage(json);
     return BeamingSubscribedMessage(
-      id: json['id'] as String?,
-      rootKeys: _readStringList(json, 'rootKeys'),
+      id: message.id,
+      rootKeys: message.rootKeys,
     );
   }
 
   /// Serializes the message to JSON.
   @override
   Map<String, Object?> toJson() {
-    return <String, Object?>{
-      if (id != null) 'id': id,
-      'kind': kind,
-      'rootKeys': rootKeys,
-    };
+    return _serverMessageWithRootKeys(id, kind, rootKeys);
   }
 }
 
@@ -166,20 +155,17 @@ class BeamingUnsubscribedMessage extends BeamingServerMessage {
 
   /// Decodes the message from JSON.
   factory BeamingUnsubscribedMessage.fromJson(Map<String, Object?> json) {
+    final message = _readRootKeysMessage(json);
     return BeamingUnsubscribedMessage(
-      id: json['id'] as String?,
-      rootKeys: _readStringList(json, 'rootKeys'),
+      id: message.id,
+      rootKeys: message.rootKeys,
     );
   }
 
   /// Serializes the message to JSON.
   @override
   Map<String, Object?> toJson() {
-    return <String, Object?>{
-      if (id != null) 'id': id,
-      'kind': kind,
-      'rootKeys': rootKeys,
-    };
+    return _serverMessageWithRootKeys(id, kind, rootKeys);
   }
 }
 
@@ -445,4 +431,25 @@ Never _missingEventValue(String fieldName) {
     kind: BeamingClientErrorKind.protocolViolation,
     message: "Missing required event field '$fieldName'.",
   );
+}
+
+({String? id, List<String> rootKeys}) _readRootKeysMessage(
+  Map<String, Object?> json,
+) {
+  return (
+    id: json['id'] as String?,
+    rootKeys: _readStringList(json, 'rootKeys'),
+  );
+}
+
+Map<String, Object?> _serverMessageWithRootKeys(
+  String? id,
+  String kind,
+  List<String> rootKeys,
+) {
+  return <String, Object?>{
+    if (id != null) 'id': id,
+    'kind': kind,
+    'rootKeys': rootKeys,
+  };
 }

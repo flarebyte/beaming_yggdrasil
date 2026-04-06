@@ -52,7 +52,7 @@ install-tools-help: ## Show how to install the main developer tools.
 	@printf '%s\n' 'jq: brew install jq'
 	@printf '%s\n' 'scc: brew install scc'
 	@printf '%s\n' 'lcov/genhtml: brew install lcov'
-	@printf '%s\n' 'npx/jscpd: install Node.js, then run npx jscpd ...'
+	@printf '%s\n' 'jscpd: install Node.js, then run npm install -g jscpd'
 
 format: format-dart ## Format all supported languages.
 
@@ -146,4 +146,4 @@ complexity: ## Show the top Dart file complexity hotspots.
 	scc --sort complexity --by-file -i dart . | head -n 15
 
 dup: ## Run duplication scanning for Dart sources.
-	npx jscpd --format dart --min-lines 10 --gitignore .
+	jscpd --format dart --min-lines 10 --gitignore --ignore ".dart-home/**,.dart_tool/**,coverage/**,build/**,temp/**,thoth-meta/**" .

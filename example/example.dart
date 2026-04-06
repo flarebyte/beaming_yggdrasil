@@ -2,6 +2,18 @@ import 'dart:async';
 
 import 'package:beaming_yggdrasil/beaming_yggdrasil.dart';
 
+const _oakRootKeyId = 'roots/oak';
+const _oakSnapshotValues = <BeamingValue>[
+  BeamingValue(
+    key: BeamingClientKey(keyId: 'roots/oak/title', version: 'v-1'),
+    value: 'oak',
+  ),
+  BeamingValue(
+    key: BeamingClientKey(keyId: 'roots/oak/status', version: 'v-1'),
+    value: 'healthy',
+  ),
+];
+
 Future<void> main() async {
   final harness = createBeamingInMemoryHarness();
   final controller = TreeController(
@@ -10,25 +22,13 @@ Future<void> main() async {
   );
 
   try {
-    await harness.testingClient.replaceSnapshot(
-      'roots/oak',
-      [
-        const BeamingValue(
-          key: BeamingClientKey(keyId: 'roots/oak/title', version: 'v-1'),
-          value: 'oak',
-        ),
-        const BeamingValue(
-          key: BeamingClientKey(keyId: 'roots/oak/status', version: 'v-1'),
-          value: 'healthy',
-        ),
-      ],
-    );
+    await harness.testingClient.replaceSnapshot(_oakRootKeyId, _oakSnapshotValues);
 
-    await controller.load('roots/oak');
-    await controller.startWatching('roots/oak');
+    await controller.load(_oakRootKeyId);
+    await controller.startWatching(_oakRootKeyId);
 
-    final createResults = await controller.createBranch('roots/oak');
-    final rxSnapshot = await controller.loadWithRx('roots/oak');
+    final createResults = await controller.createBranch(_oakRootKeyId);
+    final rxSnapshot = await controller.loadWithRx(_oakRootKeyId);
 
     print('Initial snapshot: ${controller.snapshot.length} values');
     print('Create results: ${createResults.map((result) => result.status).toList()}');
