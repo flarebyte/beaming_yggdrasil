@@ -1,0 +1,12 @@
+locator: test/e2e/chatty_websocket_e2e_test.dart
+meta:
+  import_files_list:
+    - dart:convert
+    - dart:io
+    - package:beaming_yggdrasil/beaming_yggdrasil.dart
+    - package:test/test.dart
+    - support/chatty_e2e_helpers.dart
+    - support/chatty_harness.dart
+  language: dart
+  testcase_titles_list:
+    - chatty websocket subscribe ping event and invalid root flows work end to end

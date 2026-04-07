@@ -9,7 +9,6 @@ meta:
     - _readClientKey
     - _readRequiredMap
     - _readRequiredString
-    - _readRootKeysMessage
     - _readStringList
     - _readValue
     - _valueToJson
