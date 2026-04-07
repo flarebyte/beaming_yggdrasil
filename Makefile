@@ -23,7 +23,7 @@ PACKAGE_NAME := beaming_yggdrasil
 	lint lint-dart analyze \
 	test test-dart test-unit test-e2e test-flutter test-coverage coverage-summary coverage-html \
 	review package-check publish-dry-run publish-check \
-	doc-gen doc-design-dir \
+	doc-gen doc-design-dir check-thoth-meta \
 	complexity dup \
 	thoth-meta thoth-meta-dart thoth-meta-dart-test thoth-lint-dart thoth-meta-merge view-thoth-meta-dart-test
 
@@ -108,6 +108,9 @@ doc-design-dir:
 doc-gen: doc-design-dir ## Validate and generate markdown from doc/design-meta.
 	$(FLYB) validate --config $(DOC_META_DIR)
 	$(FLYB) generate markdown --config $(DOC_META_DIR)
+
+check-thoth-meta: ## Report orphaned Thoth YAML files and Dart metadata missing meta.purpose.
+	YQ="$(YQ)" sh ./scripts/check_thoth_meta.sh
 
 thoth-meta: thoth-meta-dart thoth-meta-dart-test ## Refresh Dart Thoth metadata and aggregate it.
 	$(THOTH) run --config ./pipeline-thoth-meta-aggregate.thoth.cue
