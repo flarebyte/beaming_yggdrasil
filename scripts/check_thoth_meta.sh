@@ -43,8 +43,10 @@ check_missing_purpose() {
 }
 
 check_orphans "thoth-meta/dart" "thoth-meta/dart/"
+check_orphans "thoth-meta/dart-support" "thoth-meta/dart-support/"
 check_orphans "thoth-meta/dart-test" "thoth-meta/dart-test/"
 check_missing_purpose "thoth-meta/dart" "thoth-meta/dart/"
+check_missing_purpose "thoth-meta/dart-support" "thoth-meta/dart-support/"
 
 if [ "$status" -eq 0 ]; then
   printf 'OK no orphaned Thoth metadata files and no Dart metadata missing meta.purpose\n'

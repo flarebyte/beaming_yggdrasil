@@ -25,7 +25,7 @@ PACKAGE_NAME := beaming_yggdrasil
 	review package-check publish-dry-run publish-check \
 	doc-gen doc-design-dir check-thoth-meta \
 	complexity dup \
-	thoth-meta thoth-meta-dart thoth-meta-dart-test thoth-lint-dart thoth-meta-merge view-thoth-meta-dart-test
+	thoth-meta thoth-meta-dart thoth-meta-dart-support thoth-meta-dart-test thoth-lint-dart thoth-meta-merge view-thoth-meta-dart-test
 
 ## Public developer targets
 
@@ -112,11 +112,14 @@ doc-gen: doc-design-dir ## Validate and generate markdown from doc/design-meta.
 check-thoth-meta: ## Report orphaned Thoth YAML files and Dart metadata missing meta.purpose.
 	YQ="$(YQ)" sh ./scripts/check_thoth_meta.sh
 
-thoth-meta: thoth-meta-dart thoth-meta-dart-test ## Refresh Dart Thoth metadata and aggregate it.
+thoth-meta: thoth-meta-dart thoth-meta-dart-support thoth-meta-dart-test ## Refresh Dart Thoth metadata and aggregate it.
 	$(THOTH) run --config ./pipeline-thoth-meta-aggregate.thoth.cue
 
 thoth-meta-dart: ## Generate Thoth metadata for lib/**/*.dart.
 	$(THOTH) run --config ./pipeline-dart-maat.thoth.cue
+
+thoth-meta-dart-support: ## Generate Thoth metadata for support/**/*.dart.
+	$(THOTH) run --config ./pipeline-dart-support-maat.thoth.cue
 
 thoth-meta-dart-test: ## Generate Thoth metadata for test/**/*.dart.
 	$(THOTH) run --config ./pipeline-dart-test-maat.thoth.cue

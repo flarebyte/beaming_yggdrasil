@@ -1,0 +1,12 @@
+locator: support/in_memory_harness_clients.dart
+meta:
+  architecture_notes: The fake client implementations stay deterministic and side-effect light so public API behavior can be exercised without real transport dependencies.
+  class_list:
+    - _InMemoryClient
+    - _InMemoryTestingClient
+    - _InMemoryWebSocketSession
+  function_list: []
+  import_files_list: []
+  language: dart
+  purpose: Implement the support-only fake client and WebSocket session types behind the in-memory harness.
+  responsibilities: Delegate snapshot and node operations into shared state, expose testing snapshot replacement, and translate support events into typed WebSocket messages.

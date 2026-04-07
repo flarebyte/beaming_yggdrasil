@@ -1,0 +1,11 @@
+locator: support/in_memory_harness.dart
+meta:
+  architecture_notes: This support-only library stays outside `lib/` so tests and examples can share the in-memory harness without publishing it as runtime API.
+  class_list: []
+  function_list: []
+  import_files_list:
+    - dart:async
+    - package:beaming_yggdrasil/beaming_yggdrasil.dart
+  language: dart
+  purpose: Provide the umbrella support library that assembles the in-memory harness used by tests and the example app.
+  responsibilities: Bind the part files, expose the support-only library boundary, and keep the harness outside the published package surface.
