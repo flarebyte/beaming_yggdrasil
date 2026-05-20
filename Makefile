@@ -134,14 +134,14 @@ view-thoth-meta-dart-test: ## Show detected Dart test titles from persisted Thot
 
 test-coverage: ## Run Dart tests with coverage output.
 	@mkdir -p "$(DART_LOCAL_HOME)" "$(COVERAGE_DIR)"
-	rm -rf "$(COVERAGE_DIR)"
+	rm -rf coverage
 	$(DART_ENV) dart run coverage:test_with_coverage --out="$(COVERAGE_DIR)" --scope-output="$(PACKAGE_NAME)"
 
 coverage-summary: test-coverage ## Print a coverage summary from lcov output.
 	lcov --summary "$(COVERAGE_LCOV)"
 
 coverage-html: test-coverage ## Generate an HTML coverage report.
-	rm -rf "$(COVERAGE_HTML_DIR)"
+	rm -rf coverage/html
 	genhtml "$(COVERAGE_LCOV)" --output-directory "$(COVERAGE_HTML_DIR)"
 
 thoth-lint-dart: ## Report complex Dart functions and methods from Thoth thresholds.
