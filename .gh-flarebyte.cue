@@ -88,12 +88,18 @@ repository: {
 }
 
 build: {
-  language:     "go"
+  language:     "dart"
   outputDir:    "build"
   checksumFile: "build/checksums.txt"
   targets: [
     "darwin-arm64",
   ]
+}
+
+devOutput: {
+  color: "auto"
+  style: "per_test"
+  showPassed: true
 }
 
 release: {
