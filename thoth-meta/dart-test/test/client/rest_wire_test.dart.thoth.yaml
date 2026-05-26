@@ -1,0 +1,21 @@
+locator: test/client/rest_wire_test.dart
+meta:
+  import_files_list:
+    - package:beaming_yggdrasil/beaming_yggdrasil.dart
+    - package:test/test.dart
+  language: dart
+  testcase_titles_list:
+    - all request DTOs round-trip with optional ids
+    - child and create request DTOs serialize and decode directly
+    - envelope round-trips custom payload decoders
+    - getSnapshot request omits optional id when null
+    - invalid wire field types throw invalidResponse errors
+    - key params convert from and to client key
+    - key value params convert from and to value
+    - response DTO validates required status fields
+    - REST common DTOs
+    - REST requests round-trip
+    - REST responses round-trip
+    - snapshot and setSnapshot response DTOs round-trip
+    - status and create response DTOs round-trip
+    - status item and new key response preserve optional message fields

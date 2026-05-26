@@ -1,0 +1,16 @@
+locator: test/client/websocket_wire_test.dart
+meta:
+  import_files_list:
+    - package:beaming_yggdrasil/beaming_yggdrasil.dart
+    - package:test/test.dart
+  language: dart
+  testcase_titles_list:
+    - decode all supported message kinds
+    - invalid payloads throw protocolViolation errors
+    - serialize client messages without optional id
+    - serialize ping message
+    - serialize subscribe and unsubscribe messages with root keys
+    - subscribed and unsubscribed tolerate missing rootKeys as empty list
+    - toJson on server message DTOs preserves wire fields
+    - WebSocket client messages
+    - WebSocket server messages
