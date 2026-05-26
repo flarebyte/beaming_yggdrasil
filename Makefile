@@ -4,6 +4,7 @@ FLYB ?= flyb
 THOTH ?= thoth
 YQ ?= yq
 JQ ?= jq
+GH ?= gh
 
 DOC_DESIGN_DIR := doc/design
 DOC_META_DIR := doc/design-meta
@@ -76,7 +77,7 @@ analyze: lint-dart ## Backward-compatible alias for Dart analysis.
 
 test-dart: ## Run Dart unit and package tests.
 	@mkdir -p "$(DART_LOCAL_HOME)"
-	$(DART_ENV) dart test $(UNIT_TEST_DIR)
+	$(GH) flarebyte test
 
 test-unit: test-dart ## Backward-compatible alias for Dart tests.
 
@@ -135,7 +136,7 @@ view-thoth-meta-dart-test: ## Show detected Dart test titles from persisted Thot
 test-coverage: ## Run Dart tests with coverage output.
 	@mkdir -p "$(DART_LOCAL_HOME)" "$(COVERAGE_DIR)"
 	rm -rf coverage
-	$(DART_ENV) dart run coverage:test_with_coverage --out="$(COVERAGE_DIR)" --scope-output="$(PACKAGE_NAME)"
+	$(GH) flarebyte cov
 
 coverage-summary: test-coverage ## Print a coverage summary from lcov output.
 	lcov --summary "$(COVERAGE_LCOV)"

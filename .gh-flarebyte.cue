@@ -102,6 +102,11 @@ devOutput: {
   showPassed: true
 }
 
+coverage: {
+  min: 80
+  enforceMin: true
+}
+
 release: {
   versionSource:    "pubspec.yaml"
   tagPrefix:        "v"

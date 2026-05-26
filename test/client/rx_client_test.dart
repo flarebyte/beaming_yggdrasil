@@ -75,6 +75,49 @@ void main() {
     );
   });
 
+  test('rx node and setNode streams preserve classic behavior', () async {
+    final harness = createBeamingInMemoryHarness();
+    addTearDown(harness.close);
+
+    await harness.testingClient.replaceSnapshot(
+      _oakRootKeyId,
+      _oakSnapshotValues(),
+    );
+
+    final nodeClassic =
+        await harness.client.getNode(_oakRootKeyId, ['title', 'status']);
+    final nodeRx =
+        await harness.rxClient.node$(_oakRootKeyId, ['title', 'status']).first;
+
+    expect(
+      nodeRx.map((value) => value.key.keyId).toList(),
+      nodeClassic.map((value) => value.key.keyId).toList(),
+    );
+    expect(
+      nodeRx.map((value) => value.value).toList(),
+      nodeClassic.map((value) => value.value).toList(),
+    );
+
+    final newValues = [
+      const BeamingValue(
+        key: BeamingClientKey(keyId: 'roots/oak/title'),
+        value: 'new-oak',
+      ),
+    ];
+    final setClassic = await harness.client.setNode(_oakRootKeyId, newValues);
+    final setRx =
+        await harness.rxClient.setNode$(_oakRootKeyId, newValues).first;
+
+    expect(
+      setRx.map((value) => value.key.keyId).toList(),
+      setClassic.map((value) => value.key.keyId).toList(),
+    );
+    expect(
+      setRx.map((value) => value.status).toList(),
+      setClassic.map((value) => value.status).toList(),
+    );
+  });
+
   test('repeated rx watch subscriptions observe equivalent event payloads',
       () async {
     final harness = createBeamingInMemoryHarness();
