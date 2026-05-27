@@ -1,0 +1,18 @@
+locator: lib/src/client/websocket_common.dart
+meta:
+  architecture_notes: These helpers stay private to the library so the public protocol surface remains small and typed.
+  class_list: []
+  function_list:
+    - _clientKeyToJson
+    - _messageWithRootKeys
+    - _missingEventValue
+    - _readClientKey
+    - _readRequiredMap
+    - _readRequiredString
+    - _readStringList
+    - _readValue
+    - _valueToJson
+  import_files_list: []
+  language: dart
+  purpose: Hold the shared protocol helpers used across the WebSocket part files.
+  responsibilities: Read and write common JSON shapes, parse root-key message payloads, and validate required protocol fields.

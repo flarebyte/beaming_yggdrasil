@@ -1,0 +1,14 @@
+locator: lib/src/client/rx_client.dart
+meta:
+  architecture_notes: Rx remains a companion layer over the classic client so DTOs and semantics stay shared and the core API remains plain Dart first.
+  class_list:
+    - BeamingClassicRxClient
+    - BeamingYggdrasilRxClient
+  function_list: []
+  import_files_list:
+    - client.dart
+    - model.dart
+    - package:rxdart/rxdart.dart
+  language: dart
+  purpose: Provide the optional Rx-friendly adapter surface for consumers who want reactive composition without forcing Rx onto every package user.
+  responsibilities: Declare Rx-shaped client methods and adapt the classic client into Rx streams.

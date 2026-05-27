@@ -1,0 +1,12 @@
+locator: test/client/node_contract_test.dart
+meta:
+  import_files_list:
+    - ../../support/in_memory_harness.dart
+    - package:beaming_yggdrasil/beaming_yggdrasil.dart
+    - package:test/test.dart
+  language: dart
+  testcase_titles_list:
+    - getNode returns values in requested key order after writes
+    - getNode skips missing keys without disturbing requested matches
+    - repeated identical node writes keep stable result and read ordering
+    - setNode preserves input order and returns status per item

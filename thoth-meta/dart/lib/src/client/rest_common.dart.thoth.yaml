@@ -1,0 +1,14 @@
+locator: lib/src/client/rest_common.dart
+meta:
+  architecture_notes: The helpers stay library-private so decoding rules remain consistent across DTOs without becoming part of the public API surface.
+  class_list:
+    - BeamingKeyParams
+    - BeamingKeyValueParams
+    - BeamingRestEnvelope
+  function_list:
+    - _readMap
+    - _requireString
+  import_files_list: []
+  language: dart
+  purpose: Hold the shared REST wire primitives and decoding helpers used by both request and response DTOs.
+  responsibilities: Encode and decode envelopes, keys, key-values, lists, and required scalar fields for REST models.

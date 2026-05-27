@@ -1,0 +1,10 @@
+locator: lib/src/client/websocket_events.dart
+meta:
+  architecture_notes: Event conversion is isolated here so protocol wiring and public event semantics can evolve without tangling session message code.
+  class_list:
+    - BeamingEventEnvelope
+  function_list: []
+  import_files_list: []
+  language: dart
+  purpose: Translate between wire-level WebSocket event envelopes and the package's public event model.
+  responsibilities: Encode event payloads, decode them from JSON, and convert them to immutable public events.

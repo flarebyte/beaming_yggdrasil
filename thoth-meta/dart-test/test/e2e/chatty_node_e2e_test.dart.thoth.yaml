@@ -1,0 +1,11 @@
+locator: test/e2e/chatty_node_e2e_test.dart
+meta:
+  import_files_list:
+    - dart:convert
+    - package:beaming_yggdrasil/beaming_yggdrasil.dart
+    - package:test/test.dart
+    - support/chatty_e2e_helpers.dart
+    - support/chatty_harness.dart
+  language: dart
+  testcase_titles_list:
+    - chatty node read write and outdated flows decode end to end

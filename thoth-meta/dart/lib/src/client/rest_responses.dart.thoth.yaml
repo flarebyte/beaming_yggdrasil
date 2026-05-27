@@ -1,0 +1,19 @@
+locator: lib/src/client/rest_responses.dart
+meta:
+  architecture_notes: Response DTOs preserve server statuses and messages instead of flattening them, because those wire semantics are part of the client contract.
+  class_list:
+    - BeamingGetKeyValueResponseData
+    - BeamingGetSnapshotResponseData
+    - BeamingNewKeyChildResponse
+    - BeamingNewKeyResponse
+    - BeamingNewKeysResponseData
+    - BeamingSetKeyValueResponseData
+    - BeamingSetSnapshotResponseData
+    - BeamingStatusKeyItem
+    - BeamingStatusKeyValueItem
+    - _BeamingStatusKeyEntry
+  function_list: []
+  import_files_list: []
+  language: dart
+  purpose: Define the inbound REST response DTOs so server replies can be decoded into stable typed structures before reaching higher client layers.
+  responsibilities: Represent snapshot, node, create, and status-bearing response payloads and convert them to and from JSON maps.

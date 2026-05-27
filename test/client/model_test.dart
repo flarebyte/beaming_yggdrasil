@@ -18,11 +18,23 @@ void main() {
     test('rejects missing or blank keyId', () {
       expect(
         () => BeamingClientKeyBuilder().build(),
-        throwsA(isA<StateError>()),
+        throwsA(
+          isA<BeamingClientError>().having(
+            (error) => error.kind,
+            'kind',
+            BeamingClientErrorKind.invalidRequest,
+          ),
+        ),
       );
       expect(
         () => BeamingClientKeyBuilder().setKeyId('   ').build(),
-        throwsA(isA<StateError>()),
+        throwsA(
+          isA<BeamingClientError>().having(
+            (error) => error.kind,
+            'kind',
+            BeamingClientErrorKind.invalidRequest,
+          ),
+        ),
       );
     });
   });
@@ -30,10 +42,7 @@ void main() {
   group('BeamingValueBuilder', () {
     test('builds a string-only value payload', () {
       final key = BeamingClientKeyBuilder().setKeyId('roots/oak').build();
-      final value = BeamingValueBuilder()
-          .setKey(key)
-          .setValue('acorn')
-          .build();
+      final value = BeamingValueBuilder().setKey(key).setValue('acorn').build();
 
       expect(value.key.keyId, 'roots/oak');
       expect(value.value, 'acorn');
@@ -42,14 +51,21 @@ void main() {
     test('requires a key', () {
       expect(
         () => BeamingValueBuilder().setValue('acorn').build(),
-        throwsA(isA<StateError>()),
+        throwsA(
+          isA<BeamingClientError>().having(
+            (error) => error.kind,
+            'kind',
+            BeamingClientErrorKind.invalidRequest,
+          ),
+        ),
       );
     });
   });
 
   test('event primitives stay immutable and typed', () {
     final rootKey = BeamingClientKeyBuilder().setKeyId('roots/oak').build();
-    final childKey = BeamingClientKeyBuilder().setKeyId('roots/oak/name').build();
+    final childKey =
+        BeamingClientKeyBuilder().setKeyId('roots/oak/name').build();
     final event = BeamingSetEvent(
       rootKey: rootKey,
       keyValue: BeamingValue(

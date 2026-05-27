@@ -1,0 +1,11 @@
+locator: lib/src/client/rest_interfaces.dart
+meta:
+  architecture_notes: The testing REST interface is split from the real one on purpose so mock-only snapshot mutation does not drift into production usage.
+  class_list:
+    - BeamingYggdrasilRestClient
+    - BeamingYggdrasilTestingRestClient
+  function_list: []
+  import_files_list: []
+  language: dart
+  purpose: Declare the transport-facing REST client boundaries so adapters can implement the wire contract without changing the main client API.
+  responsibilities: Expose real-client REST methods and the separate testing-only snapshot seeding method.

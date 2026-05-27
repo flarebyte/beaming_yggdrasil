@@ -1,0 +1,11 @@
+locator: lib/src/client/testing_client.dart
+meta:
+  architecture_notes: Snapshot mutation lives here on purpose because the real client is meant to read server-created snapshots rather than author them.
+  class_list:
+    - BeamingYggdrasilTestingClient
+  function_list: []
+  import_files_list:
+    - model.dart
+  language: dart
+  purpose: Define the testing-only client surface for snapshot control that real consumers must not rely on in production code.
+  responsibilities: Expose snapshot replacement for tests, fixtures, and mock-server setup.

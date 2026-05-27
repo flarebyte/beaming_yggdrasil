@@ -1,0 +1,9 @@
+locator: test/client/api_surface_test.dart
+meta:
+  import_files_list:
+    - ../../support/in_memory_harness.dart
+    - package:beaming_yggdrasil/beaming_yggdrasil.dart
+    - package:test/test.dart
+  language: dart
+  testcase_titles_list:
+    - public api surfaces remain separated in the in-memory harness

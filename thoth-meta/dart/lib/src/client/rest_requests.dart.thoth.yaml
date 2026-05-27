@@ -1,0 +1,16 @@
+locator: lib/src/client/rest_requests.dart
+meta:
+  architecture_notes: These types preserve request ordering and wire field names exactly so HTTP adapters do not need ad hoc map assembly logic.
+  class_list:
+    - BeamingGetKeyValueRequest
+    - BeamingGetSnapshotRequest
+    - BeamingNewKeyChildRequest
+    - BeamingNewKeyRequest
+    - BeamingNewKeysRequest
+    - BeamingSetKeyValueRequest
+    - BeamingSetSnapshotRequest
+  function_list: []
+  import_files_list: []
+  language: dart
+  purpose: Define the outbound REST request DTOs used to speak the server wire contract in a typed and deterministic way.
+  responsibilities: Represent snapshot, node, and create request payloads and convert them to and from JSON maps.

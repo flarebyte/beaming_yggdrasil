@@ -1,0 +1,8 @@
+locator: test/e2e/support/chatty_harness.dart
+meta:
+  import_files_list:
+    - dart:async
+    - dart:convert
+    - dart:io
+  language: dart
+  testcase_titles_list: []

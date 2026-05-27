@@ -1,0 +1,10 @@
+locator: test/client/consumer_journey_test.dart
+meta:
+  import_files_list:
+    - ../../support/in_memory_harness.dart
+    - package:beaming_yggdrasil/beaming_yggdrasil.dart
+    - package:test/test.dart
+  language: dart
+  testcase_titles_list:
+    - loads a snapshot and starts watching updates
+    - returns deterministic snapshot values across repeated reads

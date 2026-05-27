@@ -1,0 +1,11 @@
+locator: support/in_memory_harness_state.dart
+meta:
+  architecture_notes: The state object is intentionally process-local and minimal because it exists only to drive deterministic support scenarios rather than model a real cache or store.
+  class_list:
+    - _InMemoryState
+  function_list:
+    - _identityDiagnostics
+  import_files_list: []
+  language: dart
+  purpose: Hold the mutable support state that powers the in-memory harness across tests and the example flow.
+  responsibilities: Store snapshots, emit diagnostics and events, implement create semantics, and generate deterministic ids and snapshot versions.

@@ -1,0 +1,16 @@
+build/
+coverage/
+scratch/
+temp/
+thoth-meta/
+
+doc/DIFF_HISTORICAL_DECISIONS.md
+doc/HISTORICAL_DECISIONS.md
+doc/beaming-yggdrasil.jpeg
+doc/design-meta/
+doc/design/
+
+pipeline-dart-function-thresholds.thoth.cue
+pipeline-dart-maat.thoth.cue
+pipeline-dart-test-maat.thoth.cue
+pipeline-thoth-meta-aggregate.thoth.cue

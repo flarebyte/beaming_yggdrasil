@@ -1,0 +1,6 @@
+locator: test/e2e/support/chatty_e2e_helpers.dart
+meta:
+  import_files_list:
+    - package:beaming_yggdrasil/beaming_yggdrasil.dart
+  language: dart
+  testcase_titles_list: []

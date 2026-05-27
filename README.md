@@ -1,140 +1,130 @@
-# beaming-yggdrasil
+# beaming_yggdrasil
 
 ![Experimental](https://img.shields.io/badge/status-experimental-blue)
 
-> Branching data tree for Dart where your data can branch out and thrive
+![beaming_yggdrasil illustration](https://raw.githubusercontent.com/flarebyte/beaming_yggdrasil/main/doc/beaming-yggdrasil.jpeg)
 
-todo
+Pure Dart client primitives for a Yggdrasil-style service, designed to embed
+cleanly inside Flutter applications.
 
-![Hero image for beaming-yggdrasil](doc/beaming-yggdrasil.jpeg)
+This package is currently best understood as a spec-aligned client foundation:
+it provides immutable models, typed wire DTOs, an optional Rx adapter, and a
+testing-only snapshot control surface. It does not yet ship production HTTP or
+WebSocket transport implementations.
 
-Highlights:
+The package currently provides:
 
--   todo
+- immutable client-side key, value, result, and event models
+- a classic `Future` and `Stream` client surface
+- an optional Rx-friendly adapter layered on top of the classic client
+- a separate testing client for snapshot seeding in tests
+- typed REST and light WebSocket DTOs
 
-A few examples:
+The package does not currently provide:
 
-Check if a required environment variable is present:
+- a production HTTP implementation
+- a production WebSocket transport
+- an offline cache engine
+- Flutter widgets or `BuildContext` integrations
 
-```dart
-is_present(env:flag:green);
-```
+## Package Scope
 
-Validate that a numeric score exceeds a threshold:
+- pure Dart library, intended to run inside Flutter apps
+- current value payload contract is string-only
+- recovery and diagnostics are explicit hooks, not hidden framework behavior
+- snapshot replacement is testing-only and not part of the real client API
 
-```dart
-number_greater_than(env:score, config:passing_score);
-```
+## Flutter-Friendly Usage
 
-Compare string values for exact match:
-
-```dart
-string_equals(env:mode, config:expected_mode);
-```
-
-Confirm that a timestamp is before a configured deadline:
-
-```dart
-date_time_less_than(env:submission_time, config:deadline);
-```
-
-Ensure a minimum number of items in a list:
-
-```dart
-list_size_greater_than_equals(env:cart_items, config:min_required);
-```
-
-Check if a user's roles include all required permissions:
+The core library stays pure Dart, so a Flutter app can wrap it in its own
+controller, view model, or state-management layer.
 
 ```dart
-is_superset_of(env:user_roles, config:required_roles);
+import 'dart:async';
+
+import 'package:beaming_yggdrasil/beaming_yggdrasil.dart';
+
+class TreeController {
+  final BeamingYggdrasilClient client;
+
+  StreamSubscription<BeamingEvent>? _subscription;
+  List<BeamingValue> snapshot = const [];
+
+  TreeController(this.client);
+
+  Future<void> load(String rootKeyId) async {
+    snapshot = await client.getSnapshot(rootKeyId);
+  }
+
+  Future<void> startWatching(String rootKeyId) async {
+    await _subscription?.cancel();
+    _subscription = client.watch([rootKeyId]).listen((event) {
+      if (event is BeamingSetEvent) {
+        _applyValue(event.keyValue);
+      }
+    });
+  }
+
+  Future<void> dispose() async {
+    await _subscription?.cancel();
+  }
+
+  void _applyValue(BeamingValue nextValue) {
+    final current = snapshot.toList();
+    final index = current.indexWhere(
+      (value) => value.key.keyId == nextValue.key.keyId,
+    );
+    if (index == -1) {
+      current.add(nextValue);
+    } else {
+      current[index] = nextValue;
+    }
+    snapshot = List<BeamingValue>.unmodifiable(current);
+  }
+}
 ```
 
-Instantiate function registry containing boolean functions like
-string\_equals:
+## Local Example
 
-```dart
-final functionRegistry = BooleanRhapsodyFunctionRegistry();
-```
+See `example/example.dart` for a complete example showing:
 
-Configure analyser options with allowed prefixes, functions, and a variable
-validator:
+- snapshot bootstrap
+- watch subscription
+- create flow
+- the optional Rx adapter
 
-```dart
-final options = RhapsodyAnalyserOptions(
-  prefixes: ['env', 'config'],
-  functions: rhapsodyFunctionNames,
-  variableValidator: (name) => RegExp(r'^[a-zA-Z][a-zA-Z0-9]*$').hasMatch(name),
-  functionRegistry: functionRegistry,
-);
+The example uses a local support harness outside `lib/`. That harness is not
+part of the published runtime API.
 
-```
+## Public API Overview
 
-Tokenise rule strings into a list of tokens:
+- `BeamingYggdrasilClient`
+  Main consumer surface using `Future` and `Stream`.
+- `BeamingYggdrasilRxClient`
+  Optional adapter for Rx-style composition over the classic client.
+- `BeamingYggdrasilTestingClient`
+  Testing-only snapshot seeding surface.
+- `BeamingRestEnvelope` and related DTOs
+  Typed REST request and response models.
+- `BeamingServerMessage` and related DTOs
+  Typed light WebSocket protocol models.
+- `BeamingRecoveryExecutor`
+  Explicit recovery-policy boundary for refresh and resubscribe flows.
 
-```dart
-final tokeniser = RhapsodyTokeniser();
-final tokens = tokeniser.parse('rule example = is_present(env:flag);');
+## Development
 
-```
+Useful commands:
 
-Perform semantic analysis on parsed tokens:
+- `make format-dart`
+- `make analyze`
+- `make test-unit`
+- `make test-e2e`
+- `make package-check`
+- `make publish-dry-run`
+- `make publish-check`
 
-```dart
-final analyser = RhapsodySemanticAnalyser(options);
-final analysis = analyser.analyse(tokens);
+`make test-e2e` expects the sibling mock-server repo at `../chatty-ratatoskr`.
 
-```
+## License
 
-Instantiate interpreter with analysed rule structure:
-
-```dart
-final interpreter = RhapsodyInterpreter(analysis);
-```
-
-Create evaluation context with variable bindings:
-
-```dart
-RhapsodyEvaluationContextBuilder builder =
- RhapsodyEvaluationContextBuilder(prefixes: ['env', 'config']);
- builder.setRefValue('env:state', 'green');
- builder.setRefValue('env:alert', 'panic');
- RhapsodyEvaluationContext context = builder.build();
-
-```
-
-Interpret rules against the provided evaluation context:
-
-```dart
-interpreter.interpret(context);
-```
-
-Print or inspect rule evaluation results:
-
-```dart
-print(context.ruleState.states);
-```
-
-## Documentation and links
-
--   [Code Maintenance :wrench:](MAINTENANCE.md)
--   [Code Of Conduct](CODE_OF_CONDUCT.md)
--   [Contributing :busts\_in\_silhouette: :construction:](CONTRIBUTING.md)
--   [Architectural Decision Records :memo:](DECISIONS.md)
--   [Contributors
-    :busts\_in\_silhouette:](https://github.com/flarebyte/beaming-yggdrasil/graphs/contributors)
--   [Dependencies](https://github.com/flarebyte/beaming-yggdrasil/network/dependencies)
--   [Glossary
-    :book:](https://github.com/flarebyte/overview/blob/main/GLOSSARY.md)
--   [Software engineering principles
-    :gem:](https://github.com/flarebyte/overview/blob/main/PRINCIPLES.md)
--   [Overview of Flarebyte.com ecosystem
-    :factory:](https://github.com/flarebyte/overview)
--   [Dart dependencies](DEPENDENCIES.md)
--   [Internal dependencies](INTERNAL-DEPENDENCIES.md)
--   [Usage](USAGE.md)
--   [Example](example/example.dart)
-
-## Related
-
--   [form\_validator](https://pub.dev/packages/form_validator)
+`beaming_yggdrasil` is available under the [LICENSE](LICENSE).

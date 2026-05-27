@@ -1,0 +1,10 @@
+locator: test/client/error_test.dart
+meta:
+  import_files_list:
+    - package:beaming_yggdrasil/beaming_yggdrasil.dart
+    - package:test/test.dart
+  language: dart
+  testcase_titles_list:
+    - builders throw invalidRequest errors for missing required fields
+    - rest decoding throws invalidResponse errors for malformed payloads
+    - websocket decoding throws protocolViolation errors for invalid messages

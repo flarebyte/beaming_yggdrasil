@@ -1,0 +1,11 @@
+locator: support/in_memory_harness_api.dart
+meta:
+  architecture_notes: This file keeps the outward-facing support API small while the fake behavior stays in the part files that implement state and transport simulation.
+  class_list:
+    - BeamingInMemoryHarness
+  function_list:
+    - createBeamingInMemoryHarness
+  import_files_list: []
+  language: dart
+  purpose: Define the support-only harness API that examples and tests use to obtain fake client surfaces.
+  responsibilities: Construct the harness, expose classic, Rx, testing, and WebSocket clients, and offer a top-level factory with optional diagnostics hooks.
